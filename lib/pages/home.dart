@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import '../components/appBar.dart';
+import '../components/drawer.dart';
+import '../components/bottomNavigationBar.dart';
+import 'package:tsuyoi/modules/goal.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,44 +16,79 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
 
+  List<Goal> _goals = [];
+
   List<Map<String, dynamic>> _items = [];
+  List<Map<String, dynamic>> _categories = [];
+
+  String? selectedItem;
 
   final _goalsBox = Hive.box("goals_box");
+  final _categoriesBox = Hive.box("categories_box");
 
   @override
   void initState() {
     super.initState();
     _refreshItems();
+
+    if (_categories.isNotEmpty) {
+      selectedItem = _categories[0]['name'].toString();
+    }
+
+    print(selectedItem);
   }
 
   void _refreshItems() {
-    final data = _goalsBox.keys.map((key) {
-      final item = _goalsBox.get(key);
-      return {"key": key, "name": item["name"], "quantity": item['quantity']};
+    final data = _goalsBox.values.map((goal) {
+      return Goal(
+        name: goal.name,
+        quantity: goal.quantity,
+        category: goal.category,
+      );
     }).toList();
 
+    final categoriesData = _categoriesBox.keys.map((key) {
+      final item = _categoriesBox.get(key);
+      return {"key": key, "name": item["name"]};
+    }).toList();
+
+    final selectedCategoryData = selectedItem;
+    print(selectedItem);
+
     setState(() {
-      _items = data.reversed.toList();
-      print(_items.length);
+      _goals = data.reversed.toList();
+      _categories = categoriesData.reversed.toList();
+      selectedItem = selectedCategoryData.toString();
+      print(_goals.length);
+      print(_categories.length);
     });
   }
 
-  Future<void> _createItem(Map<String, dynamic> newItem) async {
-    await _goalsBox.add(newItem);
+  void _createItem(Map<String, dynamic> newItem) async {
+    final newGoal = Goal(
+      name: _nameController.text,
+      quantity: _quantityController.text,
+      category: selectedItem ?? "", // Usa la categoria selezionata
+    );
+    await _goalsBox.add(newGoal);
+
+    // Aggiungi il nuovo obiettivo alla lista
+    _goals.add(newGoal);
+
     _refreshItems();
   }
 
-  Future<void> _updateItem(int itemKey, Map<String, dynamic> item) async {
+  Future<void> _updateItem(String itemKey, Map<String, dynamic> item) async {
     await _goalsBox.put(itemKey, item);
     _refreshItems();
   }
 
-  Future<void> _deleteItem(int itemKey) async {
+  Future<void> _deleteItem(String itemKey) async {
     await _goalsBox.delete(itemKey);
     _refreshItems();
   }
 
-  void _showForm(BuildContext context, int? itemKey) async {
+  void _showForm(BuildContext context, String? itemKey) async {
     if (itemKey != null) {
       final existingItem =
           _items.firstWhere((element) => element['key'] == itemKey);
@@ -78,10 +117,18 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextField(
-                    controller: _quantityController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(hintText: "quantity"),
+                  DropdownButton<String>(
+                    value: selectedItem,
+                    items: _categories
+                        .map((category) => DropdownMenuItem<String>(
+                              value: category['name'].toString(),
+                              child: Text(category['name'].toString()),
+                            ))
+                        .toList(),
+                    onChanged: (item) {
+                      setState(() => selectedItem = item);
+                      _refreshItems();
+                    },
                   ),
                   const SizedBox(
                     height: 20,
@@ -92,6 +139,7 @@ class _HomePageState extends State<HomePage> {
                           _createItem({
                             "name": _nameController.text,
                             "quantity": _quantityController.text,
+                            "category": "",
                           });
                         }
 
@@ -99,6 +147,7 @@ class _HomePageState extends State<HomePage> {
                           _updateItem(itemKey, {
                             "name": _nameController.text.trim(),
                             "quantity": _quantityController.text.trim(),
+                            "category": selectedItem,
                           });
                         }
 
@@ -119,26 +168,36 @@ class _HomePageState extends State<HomePage> {
       appBar: appBar(),
       drawer: drawer(context),
       body: ListView.builder(
-          itemCount: _items.length,
+          itemCount: _goals.length,
           itemBuilder: (_, index) {
-            final currentItem = _items[index];
+            final currentGoal = _goals[index];
             return Card(
-                color: Colors.lightBlue.shade100,
+                color: Colors.blue.shade200,
                 margin: const EdgeInsets.all(10),
                 elevation: 3,
                 child: ListTile(
-                    title: Text(currentItem['name']),
-                    subtitle: Text(currentItem['quantity'.toString()]),
+                    title: Text(
+                      currentGoal.getName(),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: Text(
+                      currentGoal.category,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit),
                           onPressed: () =>
-                              _showForm(context, currentItem['key']),
+                              _showForm(context, currentGoal.getName()),
                         ),
                         IconButton(
-                            onPressed: () => _deleteItem(currentItem['key']),
+                            onPressed: () => _deleteItem(currentGoal.getName()),
                             icon: const Icon(Icons.delete))
                       ],
                     )));
@@ -153,77 +212,4 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: bottomNavigationBar(),
     );
   }
-}
-
-AppBar appBar() {
-  return AppBar(
-    title: const Text(
-      "Tsuyoi",
-    ),
-    centerTitle: true,
-    actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))],
-  );
-}
-
-BottomNavigationBar bottomNavigationBar() {
-  return BottomNavigationBar(
-    items: const <BottomNavigationBarItem>[
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: 'Home',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.emoji_objects),
-        label: 'Obiettivi giornalieri',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.person),
-        label: 'Profilo',
-      ),
-    ],
-  );
-}
-
-Drawer drawer(BuildContext context) {
-  return Drawer(
-    // Add a ListView to the drawer. This ensures the user can scroll
-    // through the options in the drawer if there isn't enough vertical
-    // space to fit everything.
-    child: ListView(
-      // Important: Remove any padding from the ListView.
-      padding: EdgeInsets.zero,
-      children: [
-        const DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-          child: Text('Drawer Header'),
-        ),
-        ListTile(
-          title: const Text('Home'),
-          onTap: () {
-            // Update the state of the app
-            // Then close the drawer
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Obiettivi'),
-          onTap: () {
-            // Update the state of the app
-            // Then close the drawer
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Calendario'),
-          onTap: () {
-            // Update the state of the app
-            // Then close the drawer
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
 }
