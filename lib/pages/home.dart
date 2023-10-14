@@ -14,14 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
 
-  List<Goal> _goals = [];
+  List<dynamic> _goals = [];
 
-  List<Map<String, dynamic>> _items = [];
-  List<Map<String, dynamic>> _categories = [];
+  List<dynamic> _categories = [];
 
-  String? selectedItem;
+  String selectedItem = "";
 
   final _goalsBox = Hive.box("goals_box");
   final _categoriesBox = Hive.box("categories_box");
@@ -32,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     _refreshItems();
 
     if (_categories.isNotEmpty) {
-      selectedItem = _categories[0]['name'].toString();
+      selectedItem = _categories[0].name;
     }
 
     print(selectedItem);
@@ -40,16 +38,11 @@ class _HomePageState extends State<HomePage> {
 
   void _refreshItems() {
     final data = _goalsBox.values.map((goal) {
-      return Goal(
-        name: goal.name,
-        quantity: goal.quantity,
-        category: goal.category,
-      );
+      return goal;
     }).toList();
 
-    final categoriesData = _categoriesBox.keys.map((key) {
-      final item = _categoriesBox.get(key);
-      return {"key": key, "name": item["name"]};
+    final categoriesData = _categoriesBox.values.map((category) {
+      return category;
     }).toList();
 
     final selectedCategoryData = selectedItem;
@@ -64,21 +57,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _createItem(Map<String, dynamic> newItem) async {
+  void _createItem() async {
+    String timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
     final newGoal = Goal(
+      id: timestampKey,
       name: _nameController.text,
-      quantity: _quantityController.text,
-      category: selectedItem ?? "", // Usa la categoria selezionata
+      category: selectedItem, // Usa la categoria selezionata
     );
-    await _goalsBox.add(newGoal);
-
-    // Aggiungi il nuovo obiettivo alla lista
-    _goals.add(newGoal);
-
+    await _goalsBox.put(newGoal.id, newGoal);
     _refreshItems();
   }
 
-  Future<void> _updateItem(String itemKey, Map<String, dynamic> item) async {
+  Future<void> _updateItem(String itemKey, Goal item) async {
     await _goalsBox.put(itemKey, item);
     _refreshItems();
   }
@@ -89,13 +79,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showForm(BuildContext context, String? itemKey) async {
-    if (itemKey != null) {
-      final existingItem =
-          _items.firstWhere((element) => element['key'] == itemKey);
-      _nameController.text = existingItem['name'];
-      _quantityController.text = existingItem['quantity'];
+    if (itemKey != null && _goalsBox.get(itemKey) is Goal) {
+      final existingItem = _goalsBox.get(itemKey) as Goal;
+      _nameController.text = existingItem.name;
     }
-
     showModalBottomSheet(
         context: context,
         elevation: 5,
@@ -119,15 +106,18 @@ class _HomePageState extends State<HomePage> {
                   ),
                   DropdownButton<String>(
                     value: selectedItem,
-                    items: _categories
+                    items: _categoriesBox.values
                         .map((category) => DropdownMenuItem<String>(
-                              value: category['name'].toString(),
-                              child: Text(category['name'].toString()),
+                              value: category.name,
+                              child: Text(category.name),
                             ))
                         .toList(),
                     onChanged: (item) {
-                      setState(() => selectedItem = item);
-                      _refreshItems();
+                      String choice = "";
+                      if (item != null) {
+                        choice = item;
+                      }
+                      setState(() => selectedItem = choice);
                     },
                   ),
                   const SizedBox(
@@ -136,23 +126,20 @@ class _HomePageState extends State<HomePage> {
                   ElevatedButton(
                       onPressed: () async {
                         if (itemKey == null) {
-                          _createItem({
-                            "name": _nameController.text,
-                            "quantity": _quantityController.text,
-                            "category": "",
-                          });
+                          _createItem();
                         }
 
                         if (itemKey != null) {
-                          _updateItem(itemKey, {
-                            "name": _nameController.text.trim(),
-                            "quantity": _quantityController.text.trim(),
-                            "category": selectedItem,
-                          });
+                          _updateItem(
+                              itemKey,
+                              Goal(
+                                id: itemKey,
+                                name: _nameController.text.trim(),
+                                category: selectedItem,
+                              ));
                         }
 
                         _nameController.text = "";
-                        _quantityController.text = "";
 
                         Navigator.of(context).pop();
                       },
@@ -177,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                 elevation: 3,
                 child: ListTile(
                     title: Text(
-                      currentGoal.getName(),
+                      currentGoal.name,
                       style: TextStyle(
                         color: Colors.black,
                       ),
@@ -193,11 +180,10 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit),
-                          onPressed: () =>
-                              _showForm(context, currentGoal.getName()),
+                          onPressed: () => _showForm(context, currentGoal.id),
                         ),
                         IconButton(
-                            onPressed: () => _deleteItem(currentGoal.getName()),
+                            onPressed: () => _deleteItem(currentGoal.id),
                             icon: const Icon(Icons.delete))
                       ],
                     )));
