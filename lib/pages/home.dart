@@ -145,13 +145,13 @@ class _HomePageState extends State<HomePage> {
             child: ListTile(
               title: Text(
                 currentGoal.name,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                 ),
               ),
               subtitle: Text(
                 currentGoal.category,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                 ),
               ),

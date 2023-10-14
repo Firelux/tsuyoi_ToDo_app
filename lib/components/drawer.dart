@@ -23,7 +23,7 @@ Drawer drawer(BuildContext context) {
             // Update the state of the app
             // Then close the drawer
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+                context, MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
         ListTile(
@@ -32,7 +32,7 @@ Drawer drawer(BuildContext context) {
             // Update the state of the app
             // Then close the drawer
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Management()));
+                context, MaterialPageRoute(builder: (context) => const Management()));
           },
         ),
         ListTile(
