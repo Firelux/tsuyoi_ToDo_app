@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/modules/goal.dart';
-import 'package:tsuyoi/pages/goals_management.dart';
+import 'package:tsuyoi/pages/category.dart';
 
 class CategoryPage extends StatefulWidget {
   final Category category;
@@ -39,8 +39,6 @@ class _CategoryPageState extends State<CategoryPage> {
     setState(() {
       _goals = data.reversed.toList();
       _achivedGoals = achived.reversed.toList();
-      print(_goals.length);
-      print(_achivedGoals.length);
     });
   }
 
@@ -64,7 +62,6 @@ class _CategoryPageState extends State<CategoryPage> {
                   final goal = _goals[index];
                   return ListTile(
                     title: Text(goal.name),
-                    // Puoi mostrare ulteriori dettagli dell'obiettivo qui
                   );
                 },
               ),

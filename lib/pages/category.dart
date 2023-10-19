@@ -5,6 +5,7 @@ import '../components/app_bar.dart';
 import '../components/drawer.dart';
 import '../components/bottom_navigation_bar.dart';
 import 'package:tsuyoi/pages/category_page.dart';
+import '../utils/category_utils.dart';
 
 class Management extends StatefulWidget {
   const Management({Key? key}) : super(key: key);
@@ -33,16 +34,7 @@ class _ManagementState extends State<Management> {
 
     setState(() {
       _categories = data.reversed.toList();
-      print(_categories.length);
     });
-  }
-
-  Future<void> _createItem() async {
-    String timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
-    final newCategory =
-        Category(id: timestampKey, name: _categoryNameController.text);
-    await _categoriesBox.put(newCategory.id, newCategory);
-    _refreshItems();
   }
 
   Future<void> _updateItem(String itemKey, Category item) async {
@@ -88,7 +80,7 @@ class _ManagementState extends State<Management> {
                   ElevatedButton(
                       onPressed: () async {
                         if (itemKey == null) {
-                          _createItem();
+                          CategoryUtils.createCategory(_categoryNameController);
                         }
 
                         if (itemKey != null) {
