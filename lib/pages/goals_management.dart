@@ -29,6 +29,7 @@ class _ManagementState extends State<Management> {
   void _refreshItems() {
     final data = _categoriesBox.values.map((category) {
       return category;
+
     }).toList();
 
     setState(() {
@@ -98,6 +99,7 @@ class _ManagementState extends State<Management> {
                                 id: itemKey,
                                 name: _categoryNameController.text.trim(),
                               ));
+
                         }
                         _categoryNameController.text = "";
 
@@ -120,6 +122,7 @@ class _ManagementState extends State<Management> {
           itemBuilder: (_, index) {
             final currentItem = _categories[index];
             return Card(
+
               color: Colors.blue.shade300,
               margin: const EdgeInsets.all(10),
               elevation: 3,
@@ -153,6 +156,7 @@ class _ManagementState extends State<Management> {
                 ),
               ),
             );
+
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -161,7 +165,9 @@ class _ManagementState extends State<Management> {
         tooltip: 'Add category',
         child: const Icon(Icons.add),
       ),
+
       bottomNavigationBar: bottomNavigationBar(context),
+
     );
   }
 }

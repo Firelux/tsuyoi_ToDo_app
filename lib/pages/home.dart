@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import '../components/bottom_navigation_bar.dart';
 import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/pages/category_page.dart';
 
 String? name = "Firelux";
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
+
   String searchQuery = "SearchQuery";
   final _goalsBox = Hive.box("goals_box");
   final _categoriesBox = Hive.box("categories_box");
@@ -24,24 +27,43 @@ class _HomePageState extends State<HomePage> {
   List<Category> _categories = [];
   String selectedItem = "";
 
+
   @override
   void initState() {
     super.initState();
     _refreshItems();
+
+    if (_categories.isNotEmpty) {
+      selectedItem = _categories[0]['name'].toString();
+    }
+
+    print(selectedItem);
   }
 
   void _refreshItems() {
+
     final data = _goalsBox.values.map((goal) => goal as Goal).toList();
     final categoriesData =
         _categoriesBox.values.map((category) => category as Category).toList();
 
+
+    final categoriesData = _categoriesBox.keys.map((key) {
+      final item = _categoriesBox.get(key);
+      return {"key": key, "name": item["name"]};
+    }).toList();
+
+    final selectedCategoryData = selectedItem;
+    print(selectedItem);
+
     setState(() {
+
       _goals = data.reversed.toList();
       _categories = categoriesData.reversed.toList();
 
       if (_categories.isNotEmpty) {
         selectedItem = _categories[0].name;
       }
+
     });
   }
 
@@ -74,6 +96,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     showModalBottomSheet(
+
       context: context,
       elevation: 5,
       isScrollControlled: true,
@@ -131,11 +154,13 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         centerTitle: false,
         leading: const CircleAvatar(
@@ -183,6 +208,7 @@ class _HomePageState extends State<HomePage> {
                     margin: const EdgeInsets.all(10),
                     elevation: 3,
                     child: Column(
+
                       children: [
                         Container(
                           height: 150,
