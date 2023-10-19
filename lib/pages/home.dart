@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../components/appBar.dart';
+import '../components/app_bar.dart';
 import '../components/drawer.dart';
-import '../components/bottomNavigationBar.dart';
+import '../components/bottom_navigation_bar.dart';
 import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 
@@ -15,6 +15,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _searchQueryController = TextEditingController();
+  static bool isSearching = false;
+  String searchQuery = "SearchQuery";
   final _goalsBox = Hive.box("goals_box");
   final _categoriesBox = Hive.box("categories_box");
 
@@ -49,6 +52,7 @@ class _HomePageState extends State<HomePage> {
       id: timestampKey,
       name: _nameController.text,
       category: selectedItem,
+      completed: false,
     );
     await _goalsBox.put(newGoal.id, newGoal);
     _refreshItems();
@@ -114,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                       id: itemKey,
                       name: _nameController.text.trim(),
                       category: selectedItem,
+                      completed: false,
                     ),
                   );
                 }
@@ -127,6 +132,76 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchQueryController,
+      autofocus: true,
+      decoration: InputDecoration(
+        hintText: "Search Data...",
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Colors.white30),
+      ),
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+      onChanged: (query) => updateSearchQuery(query),
+    );
+  }
+
+  List<Widget> buildActions() {
+    if (isSearching) {
+      return <Widget>[
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (_searchQueryController == "" ||
+                _searchQueryController.text.isEmpty) {
+              Navigator.pop(context);
+              return;
+            }
+            _clearSearchQuery();
+          },
+        ),
+      ];
+    }
+
+    return <Widget>[
+      IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: startSearch,
+      ),
+    ];
+  }
+
+  void startSearch() {
+    /*
+    ModalRoute.of(context)
+        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
+  */
+    setState(() {
+      isSearching = true;
+    });
+  }
+
+  void updateSearchQuery(String newQuery) {
+    setState(() {
+      searchQuery = newQuery;
+    });
+  }
+
+  void stopSearching() {
+    _clearSearchQuery();
+
+    setState(() {
+      isSearching = false;
+    });
+  }
+
+  void _clearSearchQuery() {
+    setState(() {
+      _searchQueryController.clear();
+      updateSearchQuery("");
+    });
   }
 
   @override
@@ -179,7 +254,7 @@ class _HomePageState extends State<HomePage> {
         tooltip: 'Add goal',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: bottomNavigationBar(),
+      bottomNavigationBar: bottomNavigationBar(context),
     );
   }
 }

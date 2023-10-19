@@ -22,8 +22,8 @@ Drawer drawer(BuildContext context) {
           onTap: () {
             // Update the state of the app
             // Then close the drawer
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => const HomePage()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
         ListTile(
@@ -31,8 +31,8 @@ Drawer drawer(BuildContext context) {
           onTap: () {
             // Update the state of the app
             // Then close the drawer
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => const Management()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const Management()));
           },
         ),
         ListTile(

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tsuyoi/pages/home.dart';
+import 'package:tsuyoi/pages/goals_management.dart';
 
 final List<Widget> _screens = [
   const HomePage(),
-  //Goals(),
-  // Altre schermate, ad esempio ProfileScreen()
 ];
 
 int _selectedIndex = 0;
@@ -15,7 +14,7 @@ int _selectedIndex = 0;
 //   });
 // }
 
-BottomNavigationBar bottomNavigationBar() {
+BottomNavigationBar bottomNavigationBar(BuildContext context) {
   return BottomNavigationBar(
     items: const <BottomNavigationBarItem>[
       BottomNavigationBarItem(
@@ -31,7 +30,18 @@ BottomNavigationBar bottomNavigationBar() {
         label: 'Profilo',
       ),
     ],
-    // currentIndex: selectedIndex,
-    // onTap: onItemTapped,
+    onTap: (
+      int index,
+    ) {
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const Management()));
+      } else if (index == 2) {}
+    },
   );
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/category.dart';
-import '../components/appBar.dart';
+import '../components/app_bar.dart';
 import '../components/drawer.dart';
-import '../components/bottomNavigationBar.dart';
+import '../components/bottom_navigation_bar.dart';
+import 'package:tsuyoi/pages/category_page.dart';
 
 class Management extends StatefulWidget {
   const Management({Key? key}) : super(key: key);
@@ -119,26 +120,39 @@ class _ManagementState extends State<Management> {
           itemBuilder: (_, index) {
             final currentItem = _categories[index];
             return Card(
-                color: Colors.blue.shade300,
-                margin: const EdgeInsets.all(10),
-                elevation: 3,
-                child: ListTile(
-                    title: Text(
-                      currentItem.name,
-                      selectionColor: Colors.black,
+              color: Colors.blue.shade300,
+              margin: const EdgeInsets.all(10),
+              elevation: 3,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryPage(category: currentItem),
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => _showForm(context, currentItem.id),
-                        ),
-                        IconButton(
-                            onPressed: () => _deleteItem(currentItem.id),
-                            icon: const Icon(Icons.delete))
-                      ],
-                    )));
+                  );
+                },
+                child: ListTile(
+                  title: Text(
+                    currentItem.name,
+                    selectionColor: Colors.black,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showForm(context, currentItem.id),
+                      ),
+                      IconButton(
+                        onPressed: () => _deleteItem(currentItem.id),
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -147,7 +161,7 @@ class _ManagementState extends State<Management> {
         tooltip: 'Add category',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: bottomNavigationBar(),
+      bottomNavigationBar: bottomNavigationBar(context),
     );
   }
 }

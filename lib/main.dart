@@ -9,11 +9,11 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(GoalAdapter());
   Hive.registerAdapter(CategoryAdapter());
+  //await Hive.deleteBoxFromDisk("categories_box");
   //await Hive.deleteBoxFromDisk("goals_box");
   await Hive.openBox('goals_box');
-  //box.clear();
   await Hive.openBox('categories_box');
-
+  //box.clear();
   runApp(const MyApp());
 }
 
