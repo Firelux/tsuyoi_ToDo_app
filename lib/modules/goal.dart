@@ -1,3 +1,4 @@
+
 import 'package:hive/hive.dart';
 
 class Goal {
@@ -11,12 +12,14 @@ class Goal {
     required this.name,
     required this.category,
     required this.completed,
+
   });
 
   String getName() {
     return name;
   }
 }
+
 
 class GoalAdapter extends TypeAdapter<Goal> {
   @override
@@ -39,3 +42,4 @@ class GoalAdapter extends TypeAdapter<Goal> {
     writer.writeBool(obj.completed); // Scrivi il campo booleano "completed"
   }
 }
+

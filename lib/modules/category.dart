@@ -1,3 +1,4 @@
+
 import 'package:hive/hive.dart';
 
 class Category {
@@ -28,3 +29,4 @@ class CategoryAdapter extends TypeAdapter<Category> {
     writer.write(obj.name);
   }
 }
+

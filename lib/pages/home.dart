@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
 import '../components/bottom_navigation_bar.dart';
 import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/pages/category_page.dart';
+
 import 'package:tsuyoi/pages/category.dart';
 import '../components/app_bar.dart';
 import '../widgets/category_card_widget.dart';
@@ -19,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
+
   String searchQuery = "SearchQuery";
   final _goalsBox = Hive.box("goals_box");
   final _categoriesBox = Hive.box("categories_box");
@@ -139,8 +142,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
-      //drawer: drawer(context),
+      appBar: appBar(), //drawer: drawer(context),
       body: ListView(
         children: [
           Padding(

@@ -13,7 +13,9 @@ void main() async {
   //await Hive.deleteBoxFromDisk("goals_box");
   await Hive.openBox('goals_box');
   await Hive.openBox('categories_box');
+
   //box.clear();
+
   runApp(const MyApp());
 }
 
