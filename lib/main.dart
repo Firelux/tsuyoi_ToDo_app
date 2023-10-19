@@ -2,11 +2,19 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:tsuyoi/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:tsuyoi/modules/goal.dart';
+import 'package:tsuyoi/modules/category.dart';
 
 void main() async {
   await Hive.initFlutter();
+  Hive.registerAdapter(GoalAdapter());
+  Hive.registerAdapter(CategoryAdapter());
+  //await Hive.deleteBoxFromDisk("categories_box");
+  //await Hive.deleteBoxFromDisk("goals_box");
   await Hive.openBox('goals_box');
   await Hive.openBox('categories_box');
+
+  //box.clear();
 
   runApp(const MyApp());
 }

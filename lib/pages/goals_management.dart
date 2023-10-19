@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../components/appBar.dart';
+import 'package:tsuyoi/modules/category.dart';
+import '../components/app_bar.dart';
 import '../components/drawer.dart';
-import '../components/bottomNavigationBar.dart';
+import '../components/bottom_navigation_bar.dart';
+import 'package:tsuyoi/pages/category_page.dart';
 
 class Management extends StatefulWidget {
   const Management({Key? key}) : super(key: key);
@@ -22,15 +24,12 @@ class _ManagementState extends State<Management> {
     _refreshItems();
   }
 
-  static List<Map<String, dynamic>> _categories = [];
+  static List<dynamic> _categories = [];
 
   void _refreshItems() {
-    final data = _categoriesBox.keys.map((key) {
-      final item = _categoriesBox.get(key);
-      return {
-        "key": key,
-        "name": item["name"],
-      };
+    final data = _categoriesBox.values.map((category) {
+      return category;
+
     }).toList();
 
     setState(() {
@@ -39,42 +38,28 @@ class _ManagementState extends State<Management> {
     });
   }
 
-  Future<void> _createItem(Map<String, dynamic> newItem) async {
-    await _categoriesBox.add(newItem);
+  Future<void> _createItem() async {
+    String timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
+    final newCategory =
+        Category(id: timestampKey, name: _categoryNameController.text);
+    await _categoriesBox.put(newCategory.id, newCategory);
     _refreshItems();
   }
 
-  Future<void> _updateItem(int itemKey, Map<String, dynamic> item) async {
-    await _categoriesBox.put(itemKey, item);
+  Future<void> _updateItem(String itemKey, Category item) async {
+    await _categoriesBox.put(item.id, item);
     _refreshItems();
   }
 
-  Future<void> _deleteItem(int itemKey) async {
+  Future<void> _deleteItem(String itemKey) async {
     await _categoriesBox.delete(itemKey);
     _refreshItems();
   }
 
-  Future<List<Map<String, dynamic>>> _getCategories() async {
-    final data = _categoriesBox.keys.map((key) {
-      final item = _categoriesBox.get(key);
-      return {
-        "key": key,
-        "name": item["name"],
-      };
-    }).toList();
-
-    return data.reversed.toList();
-  }
-
-  List<Map<String, dynamic>> getCategories() {
-    return _categories;
-  }
-
-  void _showForm(BuildContext context, int? itemKey) async {
-    if (itemKey != null) {
-      final existingItem =
-          _categories.firstWhere((element) => element['key'] == itemKey);
-      _categoryNameController.text = existingItem['name'];
+  void _showForm(BuildContext context, String? itemKey) async {
+    if (itemKey != null && _categoriesBox.get(itemKey) is Category) {
+      final existingItem = _categoriesBox.get(itemKey) as Category;
+      _categoryNameController.text = existingItem.name;
     }
 
     showModalBottomSheet(
@@ -104,15 +89,17 @@ class _ManagementState extends State<Management> {
                   ElevatedButton(
                       onPressed: () async {
                         if (itemKey == null) {
-                          _createItem({
-                            "name": _categoryNameController.text,
-                          });
+                          _createItem();
                         }
 
                         if (itemKey != null) {
-                          _updateItem(itemKey, {
-                            "name": _categoryNameController.text.trim(),
-                          });
+                          _updateItem(
+                              itemKey,
+                              Category(
+                                id: itemKey,
+                                name: _categoryNameController.text.trim(),
+                              ));
+
                         }
                         _categoryNameController.text = "";
 
@@ -135,27 +122,41 @@ class _ManagementState extends State<Management> {
           itemBuilder: (_, index) {
             final currentItem = _categories[index];
             return Card(
-                color: Colors.blue.shade300,
-                margin: const EdgeInsets.all(10),
-                elevation: 3,
-                child: ListTile(
-                    title: Text(
-                      currentItem['name'],
-                      selectionColor: Colors.black,
+
+              color: Colors.blue.shade300,
+              margin: const EdgeInsets.all(10),
+              elevation: 3,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryPage(category: currentItem),
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () =>
-                              _showForm(context, currentItem['key']),
-                        ),
-                        IconButton(
-                            onPressed: () => _deleteItem(currentItem['key']),
-                            icon: const Icon(Icons.delete))
-                      ],
-                    )));
+                  );
+                },
+                child: ListTile(
+                  title: Text(
+                    currentItem.name,
+                    selectionColor: Colors.black,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showForm(context, currentItem.id),
+                      ),
+                      IconButton(
+                        onPressed: () => _deleteItem(currentItem.id),
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -164,7 +165,9 @@ class _ManagementState extends State<Management> {
         tooltip: 'Add category',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: bottomNavigationBar(),
+
+      bottomNavigationBar: bottomNavigationBar(context),
+
     );
   }
 }
