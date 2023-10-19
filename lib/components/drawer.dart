@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tsuyoi/pages/goals_management.dart';
+import 'package:tsuyoi/pages/category.dart';
 import 'package:tsuyoi/pages/home.dart';
 
 Drawer drawer(BuildContext context) {

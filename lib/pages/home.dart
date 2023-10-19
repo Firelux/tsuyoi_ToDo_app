@@ -6,7 +6,14 @@ import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/pages/category_page.dart';
 
-String? name = "Firelux";
+
+import 'package:tsuyoi/pages/category.dart';
+import '../components/app_bar.dart';
+import '../widgets/category_card_widget.dart';
+import '../widgets/goal_card_widget.dart';
+import '../utils/category_utils.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,11 +38,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _refreshItems();
 
-    if (_categories.isNotEmpty) {
-      selectedItem = _categories[0].name;
-    }
-
-    print(selectedItem);
   }
 
   void _refreshItems() {
@@ -43,7 +45,6 @@ class _HomePageState extends State<HomePage> {
     final categoriesData =
         _categoriesBox.values.map((category) => category as Category).toList();
 
-    print(selectedItem);
 
     setState(() {
       _goals = data.reversed.toList();
@@ -146,30 +147,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        leading: const CircleAvatar(
-          radius: 30.0,
-          backgroundImage: NetworkImage(
-              'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'),
-          backgroundColor: Colors.transparent,
-        ),
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              '$name',
-              textAlign: TextAlign.left,
-            ),
-            Text(
-              "Welcome $name",
-              style: const TextStyle(fontSize: 16),
-            )
-          ],
-        ),
-      ),
 
-      //drawer: drawer(context),
+      appBar: appBar(), //drawer: drawer(context),
+
       body: ListView(
         children: [
           Padding(
@@ -178,141 +158,82 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             ),
           ),
+
+          if (_categories.isEmpty)
+            SizedBox(
+              width: 100,
+              height: 260,
+              child: Card(
+                  color: const Color(0xFF673AB7),
+                  margin: const EdgeInsets.all(10),
+                  elevation: 3,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Management(),
+
+                        ),
+                      );
+                    },
+                  )),
+            ),
           SizedBox(
-            height: 260,
-            child: ListView.builder(
-              itemCount: _categories.length,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (_, index) {
-                final currentItem = _categories[index];
-                return SizedBox(
-                  width: 300,
-                  child: Card(
-                    color: Color(0xFF673AB7),
-                    margin: const EdgeInsets.all(10),
-                    elevation: 3,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 150,
-                          width: double.infinity,
-                          color: Color(0xFF2196F3),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CategoryPage(category: currentItem),
-                                ),
-                              );
-                            },
-                            child: ListTile(
-                              title: Text(
-                                currentItem.name,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    iconSize: 24,
-                                    onPressed: () =>
-                                        _showForm(context, currentItem.id),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    iconSize: 24,
-                                    onPressed: () =>
-                                        _deleteItem(currentItem.id),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+              height: 260,
+              child: ListView.builder(
+                itemCount: _categories.length,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final currentCategory = _categories[index];
+                  return CategoryCard(
+                    category: currentCategory,
+                    onTap: (category) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CategoryPage(category: category),
                         ),
-                        const Spacer(),
-                        Container(
-                          child: const Text(
-                            "Progress:",
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                        const Spacer(),
-                        SizedBox(
-                          width: 240,
-                          child: LinearProgressIndicator(
-                            value: 0.6,
-                            minHeight: 12,
-                            borderRadius: BorderRadius.circular(10),
-                            backgroundColor: Color(0xFF9E9E9E),
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.green),
-                          ),
-                        ),
-                        const Spacer(),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-              top: 15,
-              left: 15,
-              right: 15,
-            ),
-            child: const Text(
-              "My Tasks",
-              style: TextStyle(fontSize: 19),
-            ),
-          ),
-          ListView.builder(
-            itemCount: _goals.length,
-            shrinkWrap: true,
-            itemBuilder: (_, index) {
-              final currentGoal = _goals[index];
-              return Card(
-                color: Colors.blue.shade200,
-                margin: const EdgeInsets.all(10),
-                elevation: 3,
-                child: ListTile(
-                  title: Text(
-                    currentGoal.name,
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  subtitle: Text(
-                    currentGoal.category,
-                    style: const TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        iconSize: 24,
-                        onPressed: () => _showForm(context, currentGoal.id),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        iconSize: 24,
-                        onPressed: () => _deleteItem(currentGoal.id),
-                      ),
-                    ],
-                  ),
+                      );
+                    },
+                    onEdit: (category) {
+                      CategoryUtils.showCategoryForm(context, category.id);
+                    },
+                    onDelete: (categoryId) {
+                      CategoryUtils.deleteCategory(categoryId);
+                      _refreshItems();
+                    },
+                  );
+                },
+              )),
+          if (_categories.isNotEmpty)
+            Container(
+                padding: const EdgeInsets.only(
+                  bottom: 10,
+                  top: 15,
+                  left: 15,
+                  right: 15,
                 ),
-              );
-            },
-          ),
+                child: Column(children: [
+                  const Text(
+                    "My Tasks",
+                    style: TextStyle(fontSize: 19),
+                  ),
+                  ListView.builder(
+                    itemCount: _goals.length,
+                    shrinkWrap: true,
+                    itemBuilder: (_, index) {
+                      final currentGoal = _goals[index];
+                      return GoalCard(
+                        goal: currentGoal,
+                        onEdit: (goal) => _showForm(context, goal.id),
+                        onDelete: (goal) => _deleteItem(goal.id),
+                      );
+                    },
+                  ),
+                ])),
         ],
       ),
 
