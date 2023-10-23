@@ -1,18 +1,16 @@
-
 import 'package:hive/hive.dart';
 
 class Goal {
   String id;
   String name;
   String category;
-  bool completed; // Cambiato da "Bool" a "bool"
+  bool completed;
 
   Goal({
     required this.id,
     required this.name,
     required this.category,
     required this.completed,
-
   });
 
   String getName() {
@@ -20,10 +18,9 @@ class Goal {
   }
 }
 
-
 class GoalAdapter extends TypeAdapter<Goal> {
   @override
-  final int typeId = 0; // Un identificativo univoco per l'adattatore
+  final int typeId = 0;
 
   @override
   Goal read(BinaryReader reader) {
@@ -42,4 +39,3 @@ class GoalAdapter extends TypeAdapter<Goal> {
     writer.writeBool(obj.completed); // Scrivi il campo booleano "completed"
   }
 }
-

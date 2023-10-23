@@ -11,6 +11,7 @@ import '../components/app_bar.dart';
 import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
 import '../utils/category_utils.dart';
+import '../utils/goal_utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,9 +21,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _nameController = TextEditingController();
-
-  String searchQuery = "SearchQuery";
   final _goalsBox = Hive.box("goals_box");
   final _categoriesBox = Hive.box("categories_box");
 
@@ -49,94 +47,6 @@ class _HomePageState extends State<HomePage> {
         selectedItem = _categories[0].name;
       }
     });
-  }
-
-  void _createItem() async {
-    final timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
-    final newGoal = Goal(
-      id: timestampKey,
-      name: _nameController.text,
-      category: selectedItem,
-      completed: false,
-    );
-    await _goalsBox.put(newGoal.id, newGoal);
-    _refreshItems();
-  }
-
-  Future<void> _updateItem(String itemKey, Goal item) async {
-    await _goalsBox.put(itemKey, item);
-    _refreshItems();
-  }
-
-  Future<void> _deleteItem(String itemKey) async {
-    await _goalsBox.delete(itemKey);
-    _refreshItems();
-  }
-
-  void _showForm(BuildContext context, String? itemKey) async {
-    if (itemKey != null && _goalsBox.get(itemKey) is Goal) {
-      final existingItem = _goalsBox.get(itemKey) as Goal;
-      _nameController.text = existingItem.name;
-    }
-
-    showModalBottomSheet(
-      context: context,
-      elevation: 5,
-      isScrollControlled: true,
-      builder: (_) => Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 15,
-          left: 15,
-          right: 15,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(hintText: "name"),
-            ),
-            const SizedBox(height: 10),
-            DropdownButton<String>(
-              value: selectedItem,
-              items: _categories.map((category) {
-                return DropdownMenuItem<String>(
-                  value: category.name,
-                  child: Text(category.name),
-                );
-              }).toList(),
-              onChanged: (item) {
-                setState(() => selectedItem = item ?? "");
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (itemKey == null) {
-                  _createItem();
-                } else {
-                  _updateItem(
-                    itemKey,
-                    Goal(
-                      id: itemKey,
-                      name: _nameController.text.trim(),
-                      category: selectedItem,
-                      completed: false,
-                    ),
-                  );
-                }
-
-                _nameController.text = "";
-                Navigator.of(context).pop();
-              },
-              child: Text(itemKey == null ? "Add new goal" : "Update"),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -219,8 +129,23 @@ class _HomePageState extends State<HomePage> {
                       final currentGoal = _goals[index];
                       return GoalCard(
                         goal: currentGoal,
-                        onEdit: (goal) => _showForm(context, goal.id),
-                        onDelete: (goal) => _deleteItem(goal.id),
+                        onEdit: (goal) => GoalManagementUtils.showGoalForm(
+                            context, goal.id, () {
+                          _refreshItems();
+                        }, _categories),
+                        onDelete: (goal) {
+                          GoalManagementUtils.showCustomModal(context, goal.id,
+                              () {
+                            _refreshItems();
+                          });
+                        },
+                        isChecked: currentGoal.completed,
+                        onCheck: (goal) => {
+                          setState(() {
+                            currentGoal.completed = goal;
+                            _refreshItems();
+                          })
+                        },
                       );
                     },
                   ),
@@ -230,7 +155,9 @@ class _HomePageState extends State<HomePage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showForm(context, null);
+          GoalManagementUtils.showGoalForm(context, null, () {
+            _refreshItems();
+          }, _categories);
         },
         tooltip: 'Add goal',
         child: const Icon(Icons.add),

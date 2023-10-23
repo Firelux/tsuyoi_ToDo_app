@@ -1,4 +1,3 @@
-
 import 'package:hive/hive.dart';
 
 class Category {
@@ -13,8 +12,7 @@ class Category {
 
 class CategoryAdapter extends TypeAdapter<Category> {
   @override
-  final int typeId =
-      1; // Deve corrispondere all'ID tipo specificato nella classe Category
+  final int typeId = 1;
 
   @override
   Category read(BinaryReader reader) {
@@ -29,4 +27,3 @@ class CategoryAdapter extends TypeAdapter<Category> {
     writer.write(obj.name);
   }
 }
-

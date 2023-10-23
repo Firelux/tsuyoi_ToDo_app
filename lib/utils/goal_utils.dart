@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/goal.dart';
+import '../modules/category.dart';
 
 String selectedItem = "";
 
@@ -28,7 +29,8 @@ class GoalManagementUtils {
     await goalsBox.delete(itemKey);
   }
 
-  static void showGoalForm(BuildContext context, String? itemKey) {
+  static void showGoalForm(BuildContext context, String? itemKey,
+      Function() onConfirm, List<Category> categories) {
     final goalsBox = Hive.box("goals_box");
     final nameController = TextEditingController();
 
@@ -58,8 +60,17 @@ class GoalManagementUtils {
             ),
             const SizedBox(height: 10),
             /*DropdownButton<String>(
-                // ... Selezione della categoria
-                ),*/
+              value: selectedItem,
+              items: categories.map((category) {
+                return DropdownMenuItem<String>(
+                  value: category.name,
+                  child: Text(category.name),
+                );
+              }).toList(),
+              onChanged: (item) {
+                selectedItem = item ?? "";
+              },
+            ),*/
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -79,12 +90,42 @@ class GoalManagementUtils {
 
                 nameController.text = "";
                 Navigator.of(context).pop();
+                onConfirm();
               },
               child: Text(itemKey == null ? "Add new goal" : "Update"),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  static void showCustomModal(
+      BuildContext context, String id, Function() onConfirm) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Attenzione'),
+          content: Text('Sei sicuro di voler cancellare questa task?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annulla'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteGoal(id);
+                onConfirm();
+              },
+              child: Text('Conferma'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
