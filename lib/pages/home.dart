@@ -6,12 +6,15 @@ import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/pages/category_page.dart';
 
+
 import 'package:tsuyoi/pages/category.dart';
 import '../components/app_bar.dart';
 import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
 import '../utils/category_utils.dart';
 import '../utils/goal_utils.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -32,12 +35,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _refreshItems();
+
   }
 
   void _refreshItems() {
     final data = _goalsBox.values.map((goal) => goal as Goal).toList();
     final categoriesData =
         _categoriesBox.values.map((category) => category as Category).toList();
+
 
     setState(() {
       _goals = data.reversed.toList();
@@ -52,7 +57,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: appBar(), //drawer: drawer(context),
+
       body: ListView(
         children: [
           Padding(
@@ -61,6 +68,7 @@ class _HomePageState extends State<HomePage> {
               height: 20,
             ),
           ),
+
           if (_categories.isEmpty)
             SizedBox(
               width: 100,
@@ -75,6 +83,7 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const Management(),
+
                         ),
                       );
                     },
