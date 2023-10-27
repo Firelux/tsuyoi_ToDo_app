@@ -23,7 +23,8 @@ class GoalCard extends StatelessWidget {
       color: isChecked ? Colors.green : Colors.blue.shade200,
       margin: const EdgeInsets.all(10),
       elevation: 3,
-      child: Column(
+      child: ListView(
+        shrinkWrap: true,
         children: <Widget>[
           AppBar(
             backgroundColor: isChecked ? Colors.green : Colors.blue.shade200,
@@ -34,6 +35,13 @@ class GoalCard extends StatelessWidget {
               ),
             ),
             actions: <Widget>[
+              IconButton(
+                icon: const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                onPressed: () => onEdit(goal),
+              ),
               PopupMenuButton<int>(
                 itemBuilder: (context) => [
                   const PopupMenuItem(

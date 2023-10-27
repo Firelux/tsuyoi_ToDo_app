@@ -30,7 +30,6 @@ class _ManagementState extends State<Management> {
   void _refreshItems() {
     final data = _categoriesBox.values.map((category) {
       return category;
-
     }).toList();
 
     setState(() {
@@ -81,7 +80,10 @@ class _ManagementState extends State<Management> {
                   ElevatedButton(
                       onPressed: () async {
                         if (itemKey == null) {
-                          CategoryUtils.createCategory(_categoryNameController);
+                          CategoryUtils.createCategory(_categoryNameController,
+                              () {
+                            _refreshItems();
+                          });
                         }
 
                         if (itemKey != null) {
@@ -91,7 +93,6 @@ class _ManagementState extends State<Management> {
                                 id: itemKey,
                                 name: _categoryNameController.text.trim(),
                               ));
-
                         }
                         _categoryNameController.text = "";
 
@@ -114,7 +115,6 @@ class _ManagementState extends State<Management> {
           itemBuilder: (_, index) {
             final currentItem = _categories[index];
             return Card(
-
               color: Colors.blue.shade300,
               margin: const EdgeInsets.all(10),
               elevation: 3,
@@ -140,7 +140,10 @@ class _ManagementState extends State<Management> {
                         onPressed: () => _showForm(context, currentItem.id),
                       ),
                       IconButton(
-                        onPressed: () => _deleteItem(currentItem.id),
+                        onPressed: () =>
+                            CategoryUtils.deleteCategory(currentItem.id, () {
+                          _refreshItems();
+                        }),
                         icon: const Icon(Icons.delete),
                       ),
                     ],
@@ -148,7 +151,6 @@ class _ManagementState extends State<Management> {
                 ),
               ),
             );
-
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -157,9 +159,7 @@ class _ManagementState extends State<Management> {
         tooltip: 'Add category',
         child: const Icon(Icons.add),
       ),
-
       bottomNavigationBar: bottomNavigationBar(context),
-
     );
   }
 }

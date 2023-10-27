@@ -39,6 +39,10 @@ class GoalManagementUtils {
       nameController.text = existingItem.name;
     }
 
+    if (categories.isNotEmpty) {
+      selectedItem = categories[0].name;
+    }
+
     showModalBottomSheet(
       context: context,
       elevation: 5,
@@ -59,7 +63,7 @@ class GoalManagementUtils {
               decoration: const InputDecoration(hintText: "name"),
             ),
             const SizedBox(height: 10),
-            /*DropdownButton<String>(
+            DropdownButton<String>(
               value: selectedItem,
               items: categories.map((category) {
                 return DropdownMenuItem<String>(
@@ -70,7 +74,7 @@ class GoalManagementUtils {
               onChanged: (item) {
                 selectedItem = item ?? "";
               },
-            ),*/
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
