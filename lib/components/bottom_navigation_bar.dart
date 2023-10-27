@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tsuyoi/pages/home.dart';
-import 'package:tsuyoi/pages/category.dart';
+import 'package:tsuyoi/screens/home.dart';
+import 'package:tsuyoi/screens/category.dart';
 
 final List<Widget> _screens = [
   const HomePage(),

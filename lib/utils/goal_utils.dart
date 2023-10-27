@@ -14,6 +14,7 @@ class GoalManagementUtils {
       id: timestampKey,
       name: nameController.text,
       category: selectedItem,
+      daily: false,
       completed: false,
     );
     await goalsBox.put(newGoal.id, newGoal);
@@ -87,6 +88,7 @@ class GoalManagementUtils {
                       id: itemKey,
                       name: nameController.text.trim(),
                       category: selectedItem,
+                      daily: false,
                       completed: false,
                     ),
                   );
@@ -110,14 +112,14 @@ class GoalManagementUtils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Attenzione'),
-          content: Text('Sei sicuro di voler cancellare questa task?'),
+          title: const Text('Attenzione'),
+          content: const Text('Sei sicuro di voler cancellare questa task?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Annulla'),
+              child: const Text('Annulla'),
             ),
             TextButton(
               onPressed: () {
@@ -125,7 +127,7 @@ class GoalManagementUtils {
                 deleteGoal(id);
                 onConfirm();
               },
-              child: Text('Conferma'),
+              child: const Text('Conferma'),
             ),
           ],
         );

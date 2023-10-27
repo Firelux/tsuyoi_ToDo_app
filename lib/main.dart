@@ -1,5 +1,5 @@
 import 'package:hive_flutter/adapters.dart';
-import 'package:tsuyoi/pages/home.dart';
+import 'package:tsuyoi/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/goal.dart';

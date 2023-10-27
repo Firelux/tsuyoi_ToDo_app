@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:tsuyoi/modules/category.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../modules/goal.dart';
+
+final goalsBox = Hive.box("goals_box");
+
+double value(String categoryName) {
+  final categoryGoals = goalsBox.values
+      .map((goal) => goal as Goal)
+      .where((goal) => goal.category == categoryName)
+      .toList();
+
+  return categoryGoals.where((goal) => goal.completed && !goal.daily).length /
+      categoryGoals.length;
+}
 
 class CategoryCard extends StatelessWidget {
   final Category category;
@@ -69,7 +83,7 @@ class CategoryCard extends StatelessWidget {
             SizedBox(
               width: 240,
               child: LinearProgressIndicator(
-                value: 0.6,
+                value: value(category.name),
                 minHeight: 12,
                 borderRadius: BorderRadius.circular(10),
                 backgroundColor: const Color(0xFF9E9E9E),

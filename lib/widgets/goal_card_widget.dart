@@ -7,6 +7,8 @@ class GoalCard extends StatelessWidget {
   final Function(Goal) onDelete;
   final bool isChecked;
   final Function(bool) onCheck;
+  final bool isDaily;
+  final Function(bool) onDaily;
 
   const GoalCard({
     super.key,
@@ -15,6 +17,8 @@ class GoalCard extends StatelessWidget {
     required this.onDelete,
     required this.isChecked,
     required this.onCheck,
+    required this.isDaily,
+    required this.onDaily,
   });
 
   @override
@@ -36,11 +40,11 @@ class GoalCard extends StatelessWidget {
             ),
             actions: <Widget>[
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.star,
-                  color: Colors.yellow,
+                  color: isDaily ? Colors.amber : Colors.blueGrey,
                 ),
-                onPressed: () => onEdit(goal),
+                onPressed: () => onDaily(!isDaily),
               ),
               PopupMenuButton<int>(
                 itemBuilder: (context) => [

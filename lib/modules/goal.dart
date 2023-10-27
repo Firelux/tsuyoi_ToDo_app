@@ -5,12 +5,14 @@ class Goal {
   String name;
   String category;
   bool completed;
+  bool daily;
 
   Goal({
     required this.id,
     required this.name,
     required this.category,
     required this.completed,
+    required this.daily,
   });
 
   String getName() {
@@ -27,8 +29,14 @@ class GoalAdapter extends TypeAdapter<Goal> {
     final id = reader.readString();
     final name = reader.readString();
     final category = reader.readString();
-    final completed = reader.readBool(); // Leggi il campo booleano "completed"
-    return Goal(id: id, name: name, category: category, completed: completed);
+    final completed = reader.readBool();
+    final daily = reader.readBool(); // Leggi il campo booleano "daily"
+    return Goal(
+        id: id,
+        name: name,
+        category: category,
+        completed: completed,
+        daily: daily);
   }
 
   @override
@@ -36,6 +44,7 @@ class GoalAdapter extends TypeAdapter<Goal> {
     writer.writeString(obj.id);
     writer.writeString(obj.name);
     writer.writeString(obj.category);
-    writer.writeBool(obj.completed); // Scrivi il campo booleano "completed"
+    writer.writeBool(obj.completed);
+    writer.writeBool(obj.daily); // Scrivi il campo booleano "daily"
   }
 }

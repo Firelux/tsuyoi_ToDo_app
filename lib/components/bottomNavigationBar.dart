@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tsuyoi/pages/home.dart';
+import 'package:tsuyoi/screens/home.dart';
 
 final List<Widget> _screens = [
-  HomePage(),
+  const HomePage(),
   //Goals(),
   // Altre schermate, ad esempio ProfileScreen()
 ];

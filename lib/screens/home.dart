@@ -4,9 +4,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../components/bottom_navigation_bar.dart';
 import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
-import 'package:tsuyoi/pages/category_page.dart';
+import 'package:tsuyoi/screens/category_page.dart';
 
-import 'package:tsuyoi/pages/category.dart';
+import 'package:tsuyoi/screens/category.dart';
 import '../components/app_bar.dart';
 import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                 right: 15,
               ),
               child: ListView(
-                physics: ClampingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
                 children: [
                   const Text(
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 19),
                   ),
                   ListView.builder(
-                    physics: ClampingScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     itemCount: _goals.length,
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
@@ -150,6 +150,14 @@ class _HomePageState extends State<HomePage> {
                         onDelete: (goal) {
                           GoalManagementUtils.showCustomModal(context, goal.id,
                               () {
+                            _refreshItems();
+                          });
+                        },
+                        isDaily: currentGoal.daily,
+                        onDaily: (daily) {
+                          setState(() {
+                            currentGoal.daily = daily;
+                            print(currentGoal.daily);
                             _refreshItems();
                           });
                         },

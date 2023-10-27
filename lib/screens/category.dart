@@ -4,7 +4,7 @@ import 'package:tsuyoi/modules/category.dart';
 import '../components/app_bar.dart';
 import '../components/drawer.dart';
 import '../components/bottom_navigation_bar.dart';
-import 'package:tsuyoi/pages/category_page.dart';
+import 'package:tsuyoi/screens/category_page.dart';
 import '../utils/category_utils.dart';
 
 class Management extends StatefulWidget {
