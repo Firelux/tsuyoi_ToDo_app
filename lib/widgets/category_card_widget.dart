@@ -11,8 +11,10 @@ double value(String categoryName) {
       .where((goal) => goal.category == categoryName)
       .toList();
 
-  return categoryGoals.where((goal) => goal.completed && !goal.daily).length /
-      categoryGoals.length;
+  return categoryGoals.length > 0
+      ? categoryGoals.where((goal) => goal.completed && !goal.daily).length /
+          categoryGoals.length
+      : 0.0;
 }
 
 class CategoryCard extends StatelessWidget {

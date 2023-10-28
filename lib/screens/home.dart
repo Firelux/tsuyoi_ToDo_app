@@ -49,6 +49,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _refreshCategory() {
+    final categoriesData =
+        _categoriesBox.values.map((category) => category as Category).toList();
+
+    setState(() {
+      _categories = categoriesData.reversed.toList();
+
+      if (_categories.isNotEmpty) {
+        selectedItem = _categories[0].name;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,19 +80,42 @@ class _HomePageState extends State<HomePage> {
               width: 100,
               height: 260,
               child: Card(
-                  color: const Color(0xFF673AB7),
-                  margin: const EdgeInsets.all(10),
-                  elevation: 3,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Management(),
+                color: const Color(0xFF673AB7),
+                margin: const EdgeInsets.all(10),
+                elevation: 3,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Management(),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        "Nessuna categoria disponibile",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                  )),
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          CategoryUtils.showCategoryForm(context, null, () {
+                            _refreshItems();
+                          });
+                          _refreshItems();
+                        },
+                        child: Text("Aggiungi categoria"),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           SizedBox(
               height: 260,

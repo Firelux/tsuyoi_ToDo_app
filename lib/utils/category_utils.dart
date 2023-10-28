@@ -60,7 +60,9 @@ class CategoryUtils {
             ElevatedButton(
               onPressed: () async {
                 if (itemKey == null) {
-                  createCategory(categoryNameController, refresh());
+                  createCategory(categoryNameController, () {
+                    refresh();
+                  });
                 } else {
                   updateCategory(
                     itemKey,
