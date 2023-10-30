@@ -23,66 +23,71 @@ class GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: isChecked ? Colors.green : Colors.blue.shade200,
-      margin: const EdgeInsets.all(10),
-      elevation: 3,
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          AppBar(
-            backgroundColor: isChecked ? Colors.green : Colors.blue.shade200,
-            title: Text(
-              goal.category,
-              style: const TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.star,
-                  color: isDaily ? Colors.amber : Colors.blueGrey,
-                ),
-                onPressed: () => onDaily(!isDaily),
-              ),
-              PopupMenuButton<int>(
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 1,
-                    child: Text('Edit'),
+    return Container(
+      child: InkWell(
+        child: Card(
+          color: isChecked ? Colors.green : Colors.blue.shade200,
+          margin: const EdgeInsets.all(10),
+          elevation: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              AppBar(
+                backgroundColor:
+                    isChecked ? Colors.green : Colors.blue.shade200,
+                title: Text(
+                  goal.name,
+                  style: const TextStyle(
+                    color: Colors.black,
                   ),
-                  const PopupMenuItem(
-                    value: 2,
-                    child: Text('Delete'),
+                ),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.star,
+                      color: isDaily ? Colors.amber : Colors.blueGrey,
+                    ),
+                    onPressed: () => onDaily(!isDaily),
+                  ),
+                  PopupMenuButton<int>(
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('Edit'),
+                      ),
+                      const PopupMenuItem(
+                        value: 2,
+                        child: Text('Delete'),
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 1) {
+                        onEdit(goal);
+                      } else if (value == 2) {
+                        onDelete(goal);
+                      }
+                    },
                   ),
                 ],
-                onSelected: (value) {
-                  if (value == 1) {
-                    onEdit(goal);
-                  } else if (value == 2) {
-                    onDelete(goal);
-                  }
-                },
+              ),
+              ListTile(
+                title: Text(
+                  goal.category,
+                  style: const TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: isChecked
+                      ? const Icon(Icons.check_circle)
+                      : const Icon(Icons.circle),
+                  iconSize: 28,
+                  onPressed: () => onCheck(!isChecked),
+                ),
               ),
             ],
           ),
-          ListTile(
-            title: Text(
-              goal.name,
-              style: const TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            trailing: IconButton(
-              icon: isChecked
-                  ? const Icon(Icons.check_box)
-                  : const Icon(Icons.check_box_outline_blank),
-              iconSize: 24,
-              onPressed: () => onCheck(!isChecked),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

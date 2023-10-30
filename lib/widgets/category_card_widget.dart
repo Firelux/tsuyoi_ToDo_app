@@ -11,7 +11,7 @@ double value(String categoryName) {
       .where((goal) => goal.category == categoryName)
       .toList();
 
-  return categoryGoals.length > 0
+  return categoryGoals.isNotEmpty
       ? categoryGoals.where((goal) => goal.completed && !goal.daily).length /
           categoryGoals.length
       : 0.0;
@@ -77,8 +77,8 @@ class CategoryCard extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            const Text(
-              "Progress:",
+            Text(
+              "Progress: ${(value(category.name) * 100).toStringAsFixed(0)}%",
               textAlign: TextAlign.left,
             ),
             const Spacer(),

@@ -6,7 +6,6 @@ import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/screens/category_page.dart';
 
-import 'package:tsuyoi/screens/category.dart';
 import '../components/app_bar.dart';
 import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
@@ -69,54 +68,37 @@ class _HomePageState extends State<HomePage> {
 
       body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Container(
-              height: 20,
-            ),
-          ),
-          if (_categories.isEmpty)
-            SizedBox(
-              width: 100,
-              height: 260,
-              child: Card(
-                color: const Color(0xFF673AB7),
-                margin: const EdgeInsets.all(10),
-                elevation: 3,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Management(),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        "Nessuna categoria disponibile",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          CategoryUtils.showCategoryForm(context, null, () {
-                            _refreshItems();
-                          });
-                          _refreshItems();
-                        },
-                        child: Text("Aggiungi categoria"),
-                      ),
-                    ],
+          Column(
+            children: [
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 10,
                   ),
-                ),
+                  const Text(
+                    "Categories",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    width: 115,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      CategoryUtils.showCategoryForm(context, null, () {
+                        _refreshItems();
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                    ),
+                    child: const Text('Add Category'),
+                  ),
+                ],
               ),
-            ),
+              const SizedBox(height: 15),
+            ],
+          ),
           SizedBox(
               height: 260,
               child: ListView.builder(
@@ -164,7 +146,10 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   const Text(
                     "My Tasks",
-                    style: TextStyle(fontSize: 19),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   ListView.builder(
                     physics: const ClampingScrollPhysics(),
@@ -193,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                         onDaily: (daily) {
                           setState(() {
                             currentGoal.daily = daily;
-                            print(currentGoal.daily);
+
                             _refreshItems();
                           });
                         },
@@ -213,15 +198,25 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          GoalManagementUtils.showGoalForm(context, null, () {
-            _refreshItems();
-          }, _categories);
-        },
-        tooltip: 'Add goal',
-        child: const Icon(Icons.add),
+      floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                GoalManagementUtils.showGoalForm(context, null, () {
+                  _refreshItems();
+                }, _categories);
+              },
+              tooltip: 'Add goal',
+              backgroundColor: Colors.blue,
+              child: const Icon(Icons.add_task),
+            ),
+          ),
+        ],
       ),
+
       bottomNavigationBar: bottomNavigationBar(context),
     );
   }
