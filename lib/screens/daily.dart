@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/category.dart';
-import '../components/app_bar.dart';
 import '../utils/goal_utils.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../widgets/goal_card_widget.dart';
@@ -62,15 +61,18 @@ class _DailyState extends State<Daily> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: AppBar(
+        title: const Text("Daily missions"),
+      ),
       //drawer: drawer(context),
       body: Column(
         children: [
           const SizedBox(height: 20),
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.start, // Imposta l'allineamento a sinistra
             children: [
+              const SizedBox(
+                width: 10,
+              ),
               Text(
                 "Progress: ${(value() * 100).toStringAsFixed(0)}%",
                 style:
@@ -78,10 +80,14 @@ class _DailyState extends State<Daily> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const SizedBox(
+                width: 10,
+              ),
               SizedBox(
                 height: 12,
                 width: 300,

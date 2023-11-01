@@ -11,8 +11,7 @@ AppBar appBar() {
           padding: EdgeInsets.only(left: 8.0),
           child: CircleAvatar(
             radius: 28.0,
-            backgroundImage: NetworkImage(
-                'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'),
+            backgroundImage: AssetImage('assets/images/unknown.jpg'),
             backgroundColor: Colors.transparent,
           ),
         ),

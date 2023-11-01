@@ -11,6 +11,7 @@ import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
 import '../utils/category_utils.dart';
 import '../utils/goal_utils.dart';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,6 +39,23 @@ class _HomePageState extends State<HomePage> {
     final categoriesData =
         _categoriesBox.values.map((category) => category as Category).toList();
 
+    const timeDailyReset = TimeOfDay(hour: 00, minute: 00);
+
+    final timeDifference = timeDailyReset.hour * 60 +
+        timeDailyReset.minute -
+        (TimeOfDay.now().hour * 60 + TimeOfDay.now().minute);
+
+    if (timeDifference >= 0) {
+      Timer(Duration(minutes: timeDifference), () {
+        int i;
+        for (i = 0; i < data.length; i++) {
+          if (data[i].daily) {
+            data[i].completed = false;
+          }
+        }
+      });
+    }
+
     setState(() {
       _goals = data.reversed.toList();
       _categories = categoriesData.reversed.toList();
@@ -45,18 +63,9 @@ class _HomePageState extends State<HomePage> {
       if (_categories.isNotEmpty) {
         selectedItem = _categories[0].name;
       }
-    });
-  }
-
-  void _refreshCategory() {
-    final categoriesData =
-        _categoriesBox.values.map((category) => category as Category).toList();
-
-    setState(() {
-      _categories = categoriesData.reversed.toList();
-
-      if (_categories.isNotEmpty) {
-        selectedItem = _categories[0].name;
+      int i;
+      for (i = 0; i < _goals.length; i++) {
+        _goalsBox.put(_goals[i].id, _goals[i]);
       }
     });
   }

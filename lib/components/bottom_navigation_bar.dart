@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tsuyoi/screens/home.dart';
 import 'package:tsuyoi/screens/daily.dart';
+import '../screens/profile.dart';
 
 final List<Widget> _screens = [
   const HomePage(),
@@ -33,7 +34,10 @@ BottomNavigationBar bottomNavigationBar(BuildContext context) {
       } else if (index == 1) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Daily()));
-      } else if (index == 2) {}
+      } else if (index == 2) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()));
+      }
     },
   );
 }
