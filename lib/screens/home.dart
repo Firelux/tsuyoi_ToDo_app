@@ -21,11 +21,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _goalsBox = Hive.box("goals_box");
-  final _categoriesBox = Hive.box("categories_box");
+  final goalsBox = Hive.box("goals_box");
+  final categoriesBox = Hive.box("categories_box");
+  final userBox = Hive.box("user_box");
 
   List<Goal> _goals = [];
   List<Category> _categories = [];
+
   String selectedItem = "";
 
   @override
@@ -35,9 +37,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _refreshItems() {
-    final data = _goalsBox.values.map((goal) => goal as Goal).toList();
+    final data = goalsBox.values.map((goal) => goal as Goal).toList();
     final categoriesData =
-        _categoriesBox.values.map((category) => category as Category).toList();
+        categoriesBox.values.map((category) => category as Category).toList();
 
     const timeDailyReset = TimeOfDay(hour: 00, minute: 00);
 
@@ -65,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       }
       int i;
       for (i = 0; i < _goals.length; i++) {
-        _goalsBox.put(_goals[i].id, _goals[i]);
+        goalsBox.put(_goals[i].id, _goals[i]);
       }
     });
   }
@@ -204,6 +206,9 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+          const SizedBox(
+            height: 80,
+          )
         ],
       ),
 

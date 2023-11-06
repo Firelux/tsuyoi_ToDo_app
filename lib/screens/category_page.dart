@@ -91,7 +91,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     onDaily: (daily) {
                       setState(() {
                         goal.daily = daily;
-                        print(goal.daily);
+
                         _refreshItems();
                       });
                     },

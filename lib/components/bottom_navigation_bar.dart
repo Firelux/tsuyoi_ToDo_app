@@ -3,10 +3,6 @@ import 'package:tsuyoi/screens/home.dart';
 import 'package:tsuyoi/screens/daily.dart';
 import '../screens/profile.dart';
 
-final List<Widget> _screens = [
-  const HomePage(),
-];
-
 BottomNavigationBar bottomNavigationBar(BuildContext context) {
   return BottomNavigationBar(
     items: const <BottomNavigationBarItem>[
