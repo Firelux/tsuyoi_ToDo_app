@@ -85,7 +85,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     onDelete: (goal) {
                       GoalManagementUtils.showCustomModal(context, goal.id, () {
                         _refreshItems();
-                      });
+                      }, 0);
                     },
                     isDaily: goal.daily,
                     onDaily: (daily) {

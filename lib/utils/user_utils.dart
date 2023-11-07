@@ -19,7 +19,8 @@ class UserUtils {
   }
 
   static Uint8List imageToUint8List(img.Image image) {
-    final img.Image imgFormat = img.copyResize(image, width: 800, height: 800);
+    final img.Image imgFormat =
+        img.copyResize(image, width: image.width, height: image.height);
     final Uint8List uint8List = Uint8List.fromList(img.encodePng(imgFormat));
     return uint8List;
   }

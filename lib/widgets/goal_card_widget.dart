@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tsuyoi/modules/goal.dart';
+import 'package:tsuyoi/utils/category_utils.dart';
 
 class GoalCard extends StatelessWidget {
   final Goal goal;
@@ -72,7 +73,7 @@ class GoalCard extends StatelessWidget {
               ),
               ListTile(
                 title: Text(
-                  goal.category,
+                  CategoryUtils.findCategoryById(goal.category),
                   style: const TextStyle(
                     color: Colors.black,
                   ),

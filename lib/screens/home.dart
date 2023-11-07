@@ -135,9 +135,10 @@ class _HomePageState extends State<HomePage> {
                       });
                     },
                     onDelete: (categoryId) {
-                      CategoryUtils.deleteCategory(categoryId, () {
+                      GoalManagementUtils.showCustomModal(context, categoryId,
+                          () {
                         _refreshItems();
-                      });
+                      }, 1);
                       _refreshItems();
                     },
                   );
@@ -183,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                           GoalManagementUtils.showCustomModal(context, goal.id,
                               () {
                             _refreshItems();
-                          });
+                          }, 0);
                         },
                         isDaily: currentGoal.daily,
                         onDaily: (daily) {

@@ -123,7 +123,7 @@ class _DailyState extends State<Daily> {
                   onDelete: (goal) {
                     GoalManagementUtils.showCustomModal(context, goal.id, () {
                       _refreshItems();
-                    });
+                    },0);
                   },
                   isDaily: goal.daily,
                   onDaily: (daily) {

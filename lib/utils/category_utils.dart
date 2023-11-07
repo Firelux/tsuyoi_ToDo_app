@@ -15,6 +15,34 @@ class CategoryUtils {
     refresh();
   }
 
+  static String findCategoryByName(String name) {
+    final categories = Hive.box("categories_box")
+        .values
+        .map((category) => category as Category)
+        .toList();
+
+    for (int i = 0; i < categories.length; i++) {
+      if (categories[i].name == name) {
+        return categories[i].id;
+      }
+    }
+    return "";
+  }
+
+  static String findCategoryById(String id) {
+    final categories = Hive.box("categories_box")
+        .values
+        .map((category) => category as Category)
+        .toList();
+
+    for (int i = 0; i < categories.length; i++) {
+      if (categories[i].id == id) {
+        return categories[i].name;
+      }
+    }
+    return "";
+  }
+
   static Future<void> updateCategory(String itemKey, Category item) async {
     final categoriesBox = Hive.box("categories_box");
     await categoriesBox.put(itemKey, item);

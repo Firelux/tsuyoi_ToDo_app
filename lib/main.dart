@@ -17,6 +17,7 @@ void main() async {
   await Hive.openBox('goals_box');
   await Hive.openBox('categories_box');
   await Hive.openBox('user_box');
+
   //box.clear();
 
   runApp(const MyApp());

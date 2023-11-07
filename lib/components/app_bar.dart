@@ -5,9 +5,10 @@ import '../utils/user_utils.dart';
 
 String refresh(int context) {
   final userBox = Hive.box("user_box");
+  
   if (userBox.isNotEmpty) {
     User user = userBox.get(0);
-
+    
     switch (context) {
       case 0:
         return user.name;
@@ -16,8 +17,16 @@ String refresh(int context) {
       default:
         return "";
     }
+  } else {
+        switch (context) {
+      case 0:
+        return "";
+      case 1:
+        return UserUtils.unknownImage();
+      default:
+        return "";
+    }
   }
-  return "";
 }
 
 AppBar appBar() {

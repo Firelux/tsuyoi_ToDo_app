@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/goal.dart';
+import 'package:tsuyoi/utils/category_utils.dart';
 import '../modules/category.dart';
 
 String selectedItem = "";
@@ -80,14 +81,15 @@ class GoalManagementUtils {
             ElevatedButton(
               onPressed: () async {
                 if (itemKey == null) {
-                  createGoal(nameController, selectedItem);
+                  createGoal(nameController,
+                      CategoryUtils.findCategoryByName(selectedItem));
                 } else {
                   updateGoal(
                     itemKey,
                     Goal(
                       id: itemKey,
                       name: nameController.text.trim(),
-                      category: selectedItem,
+                      category: CategoryUtils.findCategoryByName(selectedItem),
                       daily: false,
                       completed: false,
                     ),
@@ -107,27 +109,43 @@ class GoalManagementUtils {
   }
 
   static void showCustomModal(
-      BuildContext context, String id, Function() onConfirm) {
+      BuildContext context, String id, Function() onConfirm, int context_) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Attenzione'),
-          content: const Text('Sei sicuro di voler cancellare questa task?'),
+          title: const Text('Warning'),
+          content: context == 0
+              ? const Text('Are you sure you want to delete this task?')
+              : const Text(
+                  'Are you sure you want to delete this category? All goals with this category will also be deleted'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Annulla'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                deleteGoal(id);
-                onConfirm();
+                if (context_ == 0) {
+                  deleteGoal(id);
+                  onConfirm();
+                } else {
+                  final goals = Hive.box("goals_box")
+                      .values
+                      .map((goal) => goal as Goal)
+                      .toList();
+                  for (int i = 0; i < goals.length; i++) {
+                    if (goals[i].category == id) {
+                      deleteGoal(goals[i].id);
+                    }
+                  }
+                  CategoryUtils.deleteCategory(id, () => onConfirm());
+                }
               },
-              child: const Text('Conferma'),
+              child: const Text('Confirm'),
             ),
           ],
         );
