@@ -43,9 +43,11 @@ class CategoryUtils {
     return "";
   }
 
-  static Future<void> updateCategory(String itemKey, Category item) async {
+  static Future<void> updateCategory(
+      String itemKey, Category item, Function() refresh) async {
     final categoriesBox = Hive.box("categories_box");
     await categoriesBox.put(itemKey, item);
+    refresh();
   }
 
   static Future<void> deleteCategory(String itemKey, Function() refresh) async {
@@ -64,28 +66,33 @@ class CategoryUtils {
       categoryNameController.text = existingItem.name;
     }
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      elevation: 5,
-      isScrollControlled: true,
-      builder: (_) => Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 15,
-          left: 15,
-          right: 15,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              controller: categoryNameController,
-              decoration: const InputDecoration(hintText: "name"),
+      builder: (context) {
+        return AlertDialog(
+          title: Text(itemKey == null ? "Add new category" : "Update"),
+          content: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                TextField(
+                  controller: categoryNameController,
+                  decoration: const InputDecoration(hintText: "name"),
+                ),
+                const SizedBox(height: 10),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 10),
-            const SizedBox(height: 20),
-            ElevatedButton(
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
               onPressed: () async {
                 if (itemKey == null) {
                   createCategory(categoryNameController.text, () {
@@ -93,12 +100,13 @@ class CategoryUtils {
                   });
                 } else {
                   updateCategory(
-                    itemKey,
-                    Category(
-                      id: itemKey,
-                      name: categoryNameController.text.trim(),
-                    ),
-                  );
+                      itemKey,
+                      Category(
+                        id: itemKey,
+                        name: categoryNameController.text.trim(),
+                      ), () {
+                    refresh();
+                  });
                 }
 
                 categoryNameController.text = "";
@@ -107,8 +115,8 @@ class CategoryUtils {
               child: Text(itemKey == null ? "Add new category" : "Update"),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
