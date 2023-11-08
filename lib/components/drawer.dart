@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tsuyoi/pages/category.dart';
-import 'package:tsuyoi/pages/home.dart';
+import 'package:tsuyoi/screens/daily.dart';
+import 'package:tsuyoi/screens/home.dart';
 
 Drawer drawer(BuildContext context) {
   return Drawer(
@@ -32,7 +32,7 @@ Drawer drawer(BuildContext context) {
             // Update the state of the app
             // Then close the drawer
             Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const Management()));
+                MaterialPageRoute(builder: (context) => const Daily()));
           },
         ),
         ListTile(

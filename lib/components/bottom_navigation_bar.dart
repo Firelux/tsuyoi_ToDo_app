@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tsuyoi/pages/home.dart';
-import 'package:tsuyoi/pages/category.dart';
-
-final List<Widget> _screens = [
-  const HomePage(),
-];
-
-int _selectedIndex = 0;
-
-// void _onItemTapped(int index) {
-//   setState(() {
-//     _selectedIndex = index;
-//   });
-// }
+import 'package:tsuyoi/screens/home.dart';
+import 'package:tsuyoi/screens/daily.dart';
+import '../screens/profile.dart';
 
 BottomNavigationBar bottomNavigationBar(BuildContext context) {
   return BottomNavigationBar(
@@ -22,12 +11,12 @@ BottomNavigationBar bottomNavigationBar(BuildContext context) {
         label: 'Home',
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.emoji_objects),
-        label: 'Obiettivi',
+        icon: Icon(Icons.diamond_rounded),
+        label: 'Daily',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.person),
-        label: 'Profilo',
+        label: 'Profile',
       ),
     ],
     onTap: (
@@ -39,9 +28,12 @@ BottomNavigationBar bottomNavigationBar(BuildContext context) {
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else if (index == 1) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const Daily()));
+      } else if (index == 2) {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const Management()));
-      } else if (index == 2) {}
+            MaterialPageRoute(builder: (context) => const ProfilePage()));
+      }
     },
   );
 }
