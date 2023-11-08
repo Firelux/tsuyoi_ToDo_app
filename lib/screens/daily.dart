@@ -73,11 +73,12 @@ class _DailyState extends State<Daily> {
               const SizedBox(
                 width: 10,
               ),
-              Text(
-                "Progress: ${(value() * 100).toStringAsFixed(0)}%",
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              if (daily.isNotEmpty || _achivedDaily.isNotEmpty)
+                Text(
+                  "Progress: ${(value() * 100).toStringAsFixed(0)}%",
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
+                ),
             ],
           ),
           const SizedBox(
@@ -88,23 +89,57 @@ class _DailyState extends State<Daily> {
               const SizedBox(
                 width: 10,
               ),
-              SizedBox(
-                height: 12,
-                width: 300,
-                child: LinearProgressIndicator(
-                  value: value(),
-                  borderRadius: BorderRadius.circular(10),
-                  backgroundColor: const Color(0xFF9E9E9E),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+              if (daily.isNotEmpty || _achivedDaily.isNotEmpty)
+                SizedBox(
+                  height: 12,
+                  width: 300,
+                  child: LinearProgressIndicator(
+                    value: value(),
+                    borderRadius: BorderRadius.circular(10),
+                    backgroundColor: const Color(0xFF9E9E9E),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.green),
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 20),
-          const Text(
-            "To do",
-            style: TextStyle(fontSize: 25),
-          ),
+          if (daily.isNotEmpty || _achivedDaily.isNotEmpty)
+            const Text(
+              "To do",
+              style: TextStyle(fontSize: 25),
+            ),
+          if (daily.isEmpty && _achivedDaily.isEmpty)
+            SizedBox(
+              height: 200,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'No daily missions, click on the ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Icon(
+                          Icons.star,
+                          size: 20,
+                          color: Colors.amber,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      ' to make goal daily',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Expanded(
             child: ListView.builder(
               itemCount: daily.length,

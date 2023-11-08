@@ -5,10 +5,10 @@ import '../utils/user_utils.dart';
 
 String refresh(int context) {
   final userBox = Hive.box("user_box");
-  
+
   if (userBox.isNotEmpty) {
     User user = userBox.get(0);
-    
+
     switch (context) {
       case 0:
         return user.name;
@@ -18,7 +18,7 @@ String refresh(int context) {
         return "";
     }
   } else {
-        switch (context) {
+    switch (context) {
       case 0:
         return "";
       case 1:
@@ -38,8 +38,10 @@ AppBar appBar() {
           padding: const EdgeInsets.only(left: 8.0),
           child: CircleAvatar(
             radius: 28.0,
-            backgroundImage: MemoryImage(UserUtils.imageToUint8List(
-                UserUtils.base64ToImage(refresh(1)))),
+            backgroundImage: AssetImage(
+                "assets/images/logo.png") /*MemoryImage(UserUtils.imageToUint8List(
+                UserUtils.base64ToImage(refresh(1))))*/
+            ,
           ),
         ),
       ],

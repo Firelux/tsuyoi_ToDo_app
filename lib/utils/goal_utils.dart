@@ -31,84 +31,6 @@ class GoalUtils {
     await goalsBox.delete(itemKey);
   }
 
-  static void showGoalForm(BuildContext context, String? itemKey,
-      Function() onConfirm, List<Category> categories) {
-    final goalsBox = Hive.box("goals_box");
-    final nameController = TextEditingController();
-
-    if (itemKey != null && goalsBox.get(itemKey) is Goal) {
-      final existingItem = goalsBox.get(itemKey) as Goal;
-      nameController.text = existingItem.name;
-    }
-
-    if (categories.isNotEmpty) {
-      selectedCategory = categories[0].name;
-    }
-
-    showModalBottomSheet(
-      context: context,
-      elevation: 5,
-      isScrollControlled: true,
-      builder: (_) => Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 15,
-          left: 15,
-          right: 15,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(hintText: "name"),
-            ),
-            const SizedBox(height: 10),
-            DropdownButton<String>(
-              value: selectedCategory,
-              items: categories.map((category) {
-                return DropdownMenuItem<String>(
-                  value: category.name,
-                  child: Text(category.name),
-                );
-              }).toList(),
-              onChanged: (item) {
-                selectedCategory = item ?? "";
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (itemKey == null) {
-                  createGoal(nameController,
-                      CategoryUtils.findCategoryByName(selectedCategory));
-                } else {
-                  updateGoal(
-                    itemKey,
-                    Goal(
-                      id: itemKey,
-                      name: nameController.text.trim(),
-                      category:
-                          CategoryUtils.findCategoryByName(selectedCategory),
-                      daily: false,
-                      completed: false,
-                    ),
-                  );
-                }
-
-                nameController.text = "";
-                Navigator.of(context).pop();
-                onConfirm();
-              },
-              child: Text(itemKey == null ? "Add new goal" : "Update"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   static String getSelectedCategory() {
     return selectedCategory;
   }
@@ -149,6 +71,89 @@ class GoalUtils {
                   }
                   CategoryUtils.deleteCategory(id, () => onConfirm());
                 }
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static void showGoalForm(BuildContext context, String? itemKey,
+      Function() onConfirm, List<Category> categories) {
+    final goalsBox = Hive.box("goals_box");
+    final nameController = TextEditingController();
+
+    if (itemKey != null && goalsBox.get(itemKey) is Goal) {
+      final existingItem = goalsBox.get(itemKey) as Goal;
+      nameController.text = existingItem.name;
+    }
+
+    if (categories.isNotEmpty) {
+      selectedCategory = categories[0].name;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(itemKey == null ? "Add new goal" : "Update"),
+          content: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(hintText: "name"),
+                ),
+                const SizedBox(height: 10),
+                DropdownButton<String>(
+                  value: selectedCategory,
+                  items: categories.map((category) {
+                    return DropdownMenuItem<String>(
+                      value: category.name,
+                      child: Text(category.name),
+                    );
+                  }).toList(),
+                  onChanged: (item) {
+                    selectedCategory = item ?? "";
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (itemKey == null) {
+                  createGoal(nameController,
+                      CategoryUtils.findCategoryByName(selectedCategory));
+                } else {
+                  updateGoal(
+                    itemKey,
+                    Goal(
+                      id: itemKey,
+                      name: nameController.text.trim(),
+                      category:
+                          CategoryUtils.findCategoryByName(selectedCategory),
+                      daily: false,
+                      completed: false,
+                    ),
+                  );
+                }
+
+                nameController.text = "";
+                Navigator.of(context).pop();
+                onConfirm();
               },
               child: const Text('Confirm'),
             ),
