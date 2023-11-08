@@ -33,6 +33,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    if (goalsBox.isEmpty) {
+      CategoryUtils.createCategory("Generic", () => _refreshItems());
+    }
+
     _refreshItems();
   }
 
@@ -213,23 +218,15 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              onPressed: () {
-                GoalManagementUtils.showGoalForm(context, null, () {
-                  _refreshItems();
-                }, _categories);
-              },
-              tooltip: 'Add goal',
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.add_task),
-            ),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          GoalManagementUtils.showGoalForm(context, null, () {
+            _refreshItems();
+          }, _categories);
+        },
+        tooltip: 'Add goal',
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add_task),
       ),
 
       bottomNavigationBar: bottomNavigationBar(context),

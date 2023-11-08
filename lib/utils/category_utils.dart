@@ -4,12 +4,12 @@ import 'package:tsuyoi/modules/category.dart';
 
 class CategoryUtils {
   static Future<void> createCategory(
-      TextEditingController categoryNameController, Function() refresh) async {
+      String categoryName, Function() refresh) async {
     final categoriesBox = Hive.box("categories_box");
     final timestampKey = DateTime.now().millisecondsSinceEpoch.toString();
     final newCategory = Category(
       id: timestampKey,
-      name: categoryNameController.text,
+      name: categoryName,
     );
     await categoriesBox.put(newCategory.id, newCategory);
     refresh();
@@ -88,7 +88,7 @@ class CategoryUtils {
             ElevatedButton(
               onPressed: () async {
                 if (itemKey == null) {
-                  createCategory(categoryNameController, () {
+                  createCategory(categoryNameController.text, () {
                     refresh();
                   });
                 } else {

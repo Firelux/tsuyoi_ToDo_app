@@ -4,7 +4,7 @@ import 'package:tsuyoi/modules/goal.dart';
 import 'package:tsuyoi/utils/category_utils.dart';
 import '../modules/category.dart';
 
-String selectedItem = "";
+String selectedCategory = "";
 
 class GoalManagementUtils {
   static Future<void> createGoal(
@@ -42,7 +42,7 @@ class GoalManagementUtils {
     }
 
     if (categories.isNotEmpty) {
-      selectedItem = categories[0].name;
+      selectedCategory = categories[0].name;
     }
 
     showModalBottomSheet(
@@ -66,7 +66,7 @@ class GoalManagementUtils {
             ),
             const SizedBox(height: 10),
             DropdownButton<String>(
-              value: selectedItem,
+              value: selectedCategory,
               items: categories.map((category) {
                 return DropdownMenuItem<String>(
                   value: category.name,
@@ -74,7 +74,7 @@ class GoalManagementUtils {
                 );
               }).toList(),
               onChanged: (item) {
-                selectedItem = item ?? "";
+                selectedCategory = item ?? "";
               },
             ),
             const SizedBox(height: 20),
@@ -82,14 +82,15 @@ class GoalManagementUtils {
               onPressed: () async {
                 if (itemKey == null) {
                   createGoal(nameController,
-                      CategoryUtils.findCategoryByName(selectedItem));
+                      CategoryUtils.findCategoryByName(selectedCategory));
                 } else {
                   updateGoal(
                     itemKey,
                     Goal(
                       id: itemKey,
                       name: nameController.text.trim(),
-                      category: CategoryUtils.findCategoryByName(selectedItem),
+                      category:
+                          CategoryUtils.findCategoryByName(selectedCategory),
                       daily: false,
                       completed: false,
                     ),
@@ -108,6 +109,10 @@ class GoalManagementUtils {
     );
   }
 
+  static String getSelectedCategory() {
+    return selectedCategory;
+  }
+
   static void showCustomModal(
       BuildContext context, String id, Function() onConfirm, int context_) {
     showDialog(
@@ -115,7 +120,7 @@ class GoalManagementUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Warning'),
-          content: context == 0
+          content: context_ == 0
               ? const Text('Are you sure you want to delete this task?')
               : const Text(
                   'Are you sure you want to delete this category? All goals with this category will also be deleted'),
