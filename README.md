@@ -37,14 +37,13 @@ Main Features:
 	Occasionally make a reminder of these passed goals so we don't forget how much we have done and how much we are worth.
     
     Timer:
-	Ability to have a timer for each daily goal.
+	Daily goal resets every day
 
     Progress Tracking:
         Monitoring the progress of goals through a visual bar.
         Percentage of daily completion of the various categories of goals.
 
     Performance Analysis:
-        Generation of personal progress reports.
         Daily performance evaluation.
 
 
