@@ -112,7 +112,7 @@ class _DailyState extends State<Daily> {
                 final goal = daily[index];
                 return GoalCard(
                   goal: goal,
-                  onEdit: (goal) => GoalManagementUtils.showGoalForm(
+                  onEdit: (goal) => GoalUtils.showGoalForm(
                     context,
                     goal.id,
                     () {
@@ -121,9 +121,9 @@ class _DailyState extends State<Daily> {
                     _categories,
                   ),
                   onDelete: (goal) {
-                    GoalManagementUtils.showCustomModal(context, goal.id, () {
+                    GoalUtils.showCustomModal(context, goal.id, () {
                       _refreshItems();
-                    },0);
+                    }, 0);
                   },
                   isDaily: goal.daily,
                   onDaily: (daily) {

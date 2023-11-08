@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    if (goalsBox.isEmpty) {
+    if (categoriesBox.isEmpty) {
       CategoryUtils.createCategory("Generic", () => _refreshItems());
     }
 
@@ -47,19 +47,18 @@ class _HomePageState extends State<HomePage> {
         categoriesBox.values.map((category) => category as Category).toList();
 
     const timeDailyReset = TimeOfDay(hour: 00, minute: 00);
-
     final timeDifference = timeDailyReset.hour * 60 +
         timeDailyReset.minute -
         (TimeOfDay.now().hour * 60 + TimeOfDay.now().minute);
 
     if (timeDifference >= 0) {
       Timer(Duration(minutes: timeDifference), () {
-        int i;
-        for (i = 0; i < data.length; i++) {
-          if (data[i].daily) {
-            data[i].completed = false;
+        data.forEach((goal) {
+          if (goal.daily) {
+            goal.completed = false;
           }
-        }
+        });
+        goalsBox.putAll(data.asMap());
       });
     }
 
@@ -140,8 +139,7 @@ class _HomePageState extends State<HomePage> {
                       });
                     },
                     onDelete: (categoryId) {
-                      GoalManagementUtils.showCustomModal(context, categoryId,
-                          () {
+                      GoalUtils.showCustomModal(context, categoryId, () {
                         _refreshItems();
                       }, 1);
                       _refreshItems();
@@ -177,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                       final currentGoal = _goals[index];
                       return GoalCard(
                         goal: currentGoal,
-                        onEdit: (goal) => GoalManagementUtils.showGoalForm(
+                        onEdit: (goal) => GoalUtils.showGoalForm(
                           context,
                           goal.id,
                           () {
@@ -186,8 +184,7 @@ class _HomePageState extends State<HomePage> {
                           _categories,
                         ),
                         onDelete: (goal) {
-                          GoalManagementUtils.showCustomModal(context, goal.id,
-                              () {
+                          GoalUtils.showCustomModal(context, goal.id, () {
                             _refreshItems();
                           }, 0);
                         },
@@ -220,7 +217,7 @@ class _HomePageState extends State<HomePage> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoalManagementUtils.showGoalForm(context, null, () {
+          GoalUtils.showGoalForm(context, null, () {
             _refreshItems();
           }, _categories);
         },

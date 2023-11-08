@@ -74,7 +74,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   final goal = _goals[index];
                   return GoalCard(
                     goal: goal,
-                    onEdit: (goal) => GoalManagementUtils.showGoalForm(
+                    onEdit: (goal) => GoalUtils.showGoalForm(
                       context,
                       goal.id,
                       () {
@@ -83,7 +83,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       _categories,
                     ),
                     onDelete: (goal) {
-                      GoalManagementUtils.showCustomModal(context, goal.id, () {
+                      GoalUtils.showCustomModal(context, goal.id, () {
                         _refreshItems();
                       }, 0);
                     },

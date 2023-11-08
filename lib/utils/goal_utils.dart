@@ -6,7 +6,7 @@ import '../modules/category.dart';
 
 String selectedCategory = "";
 
-class GoalManagementUtils {
+class GoalUtils {
   static Future<void> createGoal(
       TextEditingController nameController, String selectedItem) async {
     final goalsBox = Hive.box("goals_box");
