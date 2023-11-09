@@ -41,7 +41,7 @@ AppBar appBar() {
           padding: const EdgeInsets.only(left: 8.0),
           /*child: Hero(
             tag: "profile-image",*/
-          child: CircleAvatar(
+          child: const CircleAvatar(
             radius: 28,
             backgroundImage: AssetImage(
                 "assets/images/logo.png") /*MemoryImage(

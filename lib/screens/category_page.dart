@@ -31,13 +31,11 @@ class _CategoryPageState extends State<CategoryPage> {
   void _refreshItems() {
     final data = _goalsBox.values
         .map((goal) => goal as Goal)
-        .where(
-            (goal) => goal.category == widget.category.name && !goal.completed)
+        .where((goal) => goal.category == widget.category.id && !goal.completed)
         .toList();
     final achived = _goalsBox.values
         .map((goal) => goal as Goal)
-        .where(
-            (goal) => goal.category == widget.category.name && goal.completed)
+        .where((goal) => goal.category == widget.category.id && goal.completed)
         .toList();
 
     final categories =
@@ -67,50 +65,57 @@ class _CategoryPageState extends State<CategoryPage> {
               "To do",
               style: TextStyle(fontSize: 25),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _goals.length,
-                itemBuilder: (context, index) {
-                  final goal = _goals[index];
-                  return GoalCard(
-                    goal: goal,
-                    onEdit: (goal) => GoalUtils.showGoalForm(
-                      context,
-                      goal.id,
-                      () {
-                        _refreshItems();
+            if (_goals.isNotEmpty)
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _goals.length,
+                  itemBuilder: (context, index) {
+                    final goal = _goals[index];
+                    return GoalCard(
+                      goal: goal,
+                      onEdit: (goal) => GoalUtils.showGoalForm(
+                        context,
+                        goal.id,
+                        () {
+                          _refreshItems();
+                        },
+                        _categories,
+                      ),
+                      onDelete: (goal) {
+                        GoalUtils.showCustomModal(context, goal.id, () {
+                          _refreshItems();
+                        }, 0);
                       },
-                      _categories,
-                    ),
-                    onDelete: (goal) {
-                      GoalUtils.showCustomModal(context, goal.id, () {
-                        _refreshItems();
-                      }, 0);
-                    },
-                    isDaily: goal.daily,
-                    onDaily: (daily) {
-                      setState(() {
-                        goal.daily = daily;
+                      isDaily: goal.daily,
+                      onDaily: (daily) {
+                        setState(() {
+                          goal.daily = daily;
 
-                        _refreshItems();
-                      });
-                    },
-                    isChecked: goal.completed,
-                    onCheck: (completed) => {
-                      setState(() {
-                        goal.completed = completed;
-                        _refreshItems();
-                      })
-                    },
-                  );
-                },
+                          _refreshItems();
+                        });
+                      },
+                      isChecked: goal.completed,
+                      onCheck: (completed) => {
+                        setState(() {
+                          goal.completed = completed;
+                          _refreshItems();
+                        })
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
+            if (_goals.isEmpty)
+              const Text("All tasks completed",
+                  style: TextStyle(
+                    fontSize: 15,
+                  )),
             const SizedBox(height: 25),
-            const Text("Completed",
-                style: TextStyle(
-                  fontSize: 20,
-                )),
+            if (_achivedGoals.isNotEmpty)
+              const Text("Completed",
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
             Expanded(
                 child: ListView.builder(
                     itemCount: _achivedGoals.length,

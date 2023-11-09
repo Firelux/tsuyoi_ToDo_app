@@ -56,9 +56,9 @@ class _HomePageState extends State<HomePage> {
         data.forEach((goal) {
           if (goal.daily) {
             goal.completed = false;
+            //goalsBox.put(goal.id, goal);
           }
         });
-        goalsBox.putAll(data.asMap());
       });
     }
 

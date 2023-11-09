@@ -5,10 +5,10 @@ import '../modules/goal.dart';
 
 final goalsBox = Hive.box("goals_box");
 
-double value(String categoryName) {
+double value(String id) {
   final categoryGoals = goalsBox.values
       .map((goal) => goal as Goal)
-      .where((goal) => goal.category == categoryName)
+      .where((goal) => goal.category == id)
       .toList();
 
   return categoryGoals.isNotEmpty
@@ -78,14 +78,14 @@ class CategoryCard extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              "Progress: ${(value(category.name) * 100).toStringAsFixed(0)}%",
+              "Progress: ${(value(category.id) * 100).toStringAsFixed(0)}%",
               textAlign: TextAlign.left,
             ),
             const Spacer(),
             SizedBox(
               width: 240,
               child: LinearProgressIndicator(
-                value: value(category.name),
+                value: value(category.id),
                 minHeight: 12,
                 borderRadius: BorderRadius.circular(10),
                 backgroundColor: const Color(0xFF9E9E9E),
