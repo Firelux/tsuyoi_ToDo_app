@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../components/bottom_navigation_bar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import '../components/bottom_navigation_bar.dart';
+import '../modules/goal.dart';
 import '../modules/user.dart';
 import '../utils/user_utils.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import '../modules/goal.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -19,6 +19,10 @@ class _ProfilePageState extends State<ProfilePage> {
   final goalsBox = Hive.box("goals_box");
 
   User user = User(id: 0, name: "", profileImage: UserUtils.unknownImage());
+
+  late TextEditingController _nameController;
+  final FocusNode _nameFocus = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +32,8 @@ class _ProfilePageState extends State<ProfilePage> {
       userBox.add(user);
     }
     user = userBox.get(0);
+
+    _nameController = TextEditingController(text: user.name);
 
     refreshUser();
   }
@@ -57,42 +63,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   bool isEditing = false;
-  Widget buildNameWidget() {
-    if (isEditing) {
-      return SizedBox(
-        width: 150,
-        child: TextField(
-          maxLength: 25,
-          textAlign: TextAlign.center,
-          controller: TextEditingController(text: user.name),
-          onSubmitted: (value) {
-            setState(() {
-              user.name = value;
-
-              UserUtils.updateUser(0, user);
-
-              isEditing = false;
-            });
-          },
-        ),
-      );
-    } else {
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            refreshUser();
-            isEditing = true;
-          });
-        },
-        child: Text(
-          user.name,
-          style: const TextStyle(
-            fontSize: 22,
-          ),
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +80,14 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Stack(
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 110,
-                    backgroundImage: MemoryImage(UserUtils.imageToUint8List(
-                        UserUtils.base64ToImage(user.profileImage))),
+                  ClipOval(
+                    child: Image.memory(
+                      UserUtils.imageToUint8List(
+                          UserUtils.base64ToImage(user.profileImage)),
+                      width: 220, // Imposta la larghezza desiderata
+                      height: 220, // Imposta l'altezza desiderata
+                      fit: BoxFit.cover, // Imposta la modalità di riempimento
+                    ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -137,20 +111,35 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
               const SizedBox(height: 20),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(width: 50),
                   Row(
                     children: [
-                      buildNameWidget(),
+                      SizedBox(
+                        width: 150,
+                        child: TextField(
+                          maxLength: 25,
+                          textAlign: TextAlign.center,
+                          controller: _nameController,
+                          focusNode: _nameFocus,
+                          onSubmitted: (value) {
+                            setState(() {
+                              user.name = value;
+                              UserUtils.updateUser(0, user);
+                              isEditing = false;
+                            });
+                          },
+                        ),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () {
-                          
                           setState(() {
                             isEditing = true;
+
+                            FocusScope.of(context).requestFocus(_nameFocus);
                           });
                         },
                       )
@@ -158,10 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 ],
               ),
-              
-
               const SizedBox(height: 20),
-
               const SizedBox(height: 10),
               Row(children: [
                 Padding(
@@ -180,17 +166,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.all(10.0),
                   child: Row(children: [
                     GestureDetector(
-                      onTap: () {
-                        
-                      },
+                      onTap: () {},
                       child: SizedBox(
-                        width: 100, 
-                        height: 100, 
+                        width: 100,
+                        height: 100,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              "Goals streak", 
+                              "Goals streak",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -217,5 +201,12 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       bottomNavigationBar: bottomNavigationBar(context),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nameFocus.dispose();
+    super.dispose();
   }
 }

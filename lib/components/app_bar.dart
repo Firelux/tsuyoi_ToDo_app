@@ -36,12 +36,13 @@ AppBar appBar() {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: CircleAvatar(
-            radius: 28.0,
-            backgroundImage: AssetImage(
-                "assets/images/logo.png") /*MemoryImage(UserUtils.imageToUint8List(
-                UserUtils.base64ToImage(refresh(1))))*/
-            ,
+          child: ClipOval(
+            child: Image.memory(
+              UserUtils.imageToUint8List(UserUtils.base64ToImage(refresh(1))),
+              width: 50, // Imposta la larghezza desiderata
+              height: 50, // Imposta l'altezza desiderata
+              fit: BoxFit.cover, // Imposta la modalità di riempimento
+            ),
           ),
         ),
       ],
