@@ -3,6 +3,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../modules/user.dart';
 import '../utils/user_utils.dart';
 
+/*import 'package:transparent_image/transparent_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+*/
 String refresh(int context) {
   final userBox = Hive.box("user_box");
 
@@ -36,14 +39,25 @@ AppBar appBar() {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: ClipOval(
-            child: Image.memory(
-              UserUtils.imageToUint8List(UserUtils.base64ToImage(refresh(1))),
-              width: 50, // Imposta la larghezza desiderata
-              height: 50, // Imposta l'altezza desiderata
-              fit: BoxFit.cover, // Imposta la modalità di riempimento
-            ),
+          /*child: Hero(
+            tag: "profile-image",*/
+          child: CircleAvatar(
+            radius: 28,
+            backgroundImage: AssetImage(
+                "assets/images/logo.png") /*MemoryImage(
+                UserUtils.imageToUint8List(UserUtils.base64ToImage(refresh(1)))*/
+            ,
           ),
+          /*child: CachedNetworkImage(
+                imageUrl: 'data:image/png;base64,${refresh(1)}',
+                placeholder: (context, url) => Image.memory(kTransparentImage),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.cover,
+                width: 10,
+                height: 10,
+              ),
+            ),
+          ),*/
         ),
       ],
     ),
