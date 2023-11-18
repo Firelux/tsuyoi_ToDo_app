@@ -11,7 +11,6 @@ import '../widgets/category_card_widget.dart';
 import '../widgets/goal_card_widget.dart';
 import '../utils/category_utils.dart';
 import '../utils/goal_utils.dart';
-import 'dart:async';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   final goalsBox = Hive.box("goals_box");
   final categoriesBox = Hive.box("categories_box");
   final userBox = Hive.box("user_box");
+  final dateBox = Hive.box("date_box");
 
   List<Goal> _goals = [];
   List<Category> _categories = [];
@@ -38,6 +38,10 @@ class _HomePageState extends State<HomePage> {
       CategoryUtils.createCategory("Generic", () => _refreshItems());
     }
 
+    if (dateBox.isEmpty) {
+      dateBox.put(0, null);
+    }
+
     _refreshItems();
   }
 
@@ -46,19 +50,13 @@ class _HomePageState extends State<HomePage> {
     final categoriesData =
         categoriesBox.values.map((category) => category as Category).toList();
 
-    const timeDailyReset = TimeOfDay(hour: 00, minute: 00);
-    final timeDifference = timeDailyReset.hour * 60 +
-        timeDailyReset.minute -
-        (TimeOfDay.now().hour * 60 + TimeOfDay.now().minute);
-
-    if (timeDifference >= 0) {
-      Timer(Duration(minutes: timeDifference), () {
-        data.forEach((goal) {
-          if (goal.daily) {
-            goal.completed = false;
-            //goalsBox.put(goal.id, goal);
-          }
-        });
+    if (DateTime.now().day != dateBox.get(0)) {
+      dateBox.put(0, DateTime.now().day);
+      data.forEach((goal) {
+        if (goal.daily) {
+          goal.completed = false;
+          //goalsBox.put(goal.id, goal);
+        }
       });
     }
 

@@ -33,41 +33,48 @@ class GoalCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              AppBar(
-                backgroundColor:
-                    isChecked ? Colors.green : Colors.blue.shade200,
-                title: Text(
-                  goal.name,
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.star,
-                      color: isDaily ? Colors.amber : Colors.blueGrey,
-                    ),
-                    onPressed: () => onDaily(!isDaily),
-                  ),
-                  PopupMenuButton<int>(
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 1,
-                        child: Text('Edit'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(14.0),
+                    child: Text(
+                      goal.name,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
                       ),
-                      const PopupMenuItem(
-                        value: 2,
-                        child: Text('Delete'),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.star,
+                          color: isDaily ? Colors.amber : Colors.blueGrey,
+                        ),
+                        onPressed: () => onDaily(!isDaily),
+                      ),
+                      PopupMenuButton<int>(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem(
+                            value: 2,
+                            child: Text('Delete'),
+                          ),
+                        ],
+                        onSelected: (value) {
+                          if (value == 1) {
+                            onEdit(goal);
+                          } else if (value == 2) {
+                            onDelete(goal);
+                          }
+                        },
                       ),
                     ],
-                    onSelected: (value) {
-                      if (value == 1) {
-                        onEdit(goal);
-                      } else if (value == 2) {
-                        onDelete(goal);
-                      }
-                    },
                   ),
                 ],
               ),

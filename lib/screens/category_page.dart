@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tsuyoi/modules/category.dart';
 import 'package:tsuyoi/modules/goal.dart';
-//import 'package:tsuyoi/screens/category.dart';
+import 'package:tsuyoi/screens/home.dart';
 import '../utils/goal_utils.dart';
 import '../widgets/goal_card_widget.dart';
 
@@ -53,11 +53,13 @@ class _CategoryPageState extends State<CategoryPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.category.name),
-          /*leading: IconButton(
+          leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const Management())),
-          ),*/
+            onPressed: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomePage()))
+            },
+          ),
         ),
         body: Column(
           children: [
